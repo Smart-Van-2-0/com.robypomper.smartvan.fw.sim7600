@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from fw_upspack_v3.commons import *
+from fw_sim7600.commons import *
 from ._definitions import *
 from ._dbus_descs import *
 from ._parsers import *

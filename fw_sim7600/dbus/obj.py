@@ -3,7 +3,7 @@
 import logging
 from pydbus.generic import signal
 
-from fw_upspack_v3.ups.mappings import *
+from fw_sim7600.sim7600.mappings import *
 
 
 logger = logging.getLogger()
