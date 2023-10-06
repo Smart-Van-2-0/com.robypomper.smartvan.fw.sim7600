@@ -2,7 +2,7 @@
 
 from .device import Device
 from .mappings import *
-from ..commons import regenerateValue
+from ..commons import regenerateValueMaxMin
 
 
 class DeviceSimulator(Device):
@@ -10,18 +10,71 @@ class DeviceSimulator(Device):
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600):
         super().__init__(device, speed, False)
         self._data = {
-            'SmartUPS': 'V3.2P',
-            'Vin': 'GOOD',
-            'BATCAP': "100",
-            'Vout': '5250'
+            'AT+CGMI': 'SIMCOM INCORPORATED',
+            'AT+CGMM': 'SIMCOM_SIM7600E-H',
+            'AT+CGSN': '860147054839863',
+            'AT+CSUB': 'B04V03',
+            'AT+CSUB_B': 'MDM9x07_LE20_S_22_V1.03_210527',
+            'AT+CGMR': 'LE20B04SIM7600M22',
+            'AT+CSQ_rssi': '2',
+            'AT+CSQ_ber': '50',
+            'CGPSINFO_lat_degrees': '4629.837756',
+            'CGPSINFO_lat_dir': 'N',
+            'CGPSINFO_log_degrees': '01120.203911',
+            'CGPSINFO_log_dir': 'E',
+            'CGPSINFO_alt': '276.8',
+            'CGPSINFO_speed': '0.0',
+            'CGPSINFO_course': '-1',
+            'CGNSSINFO_mode': '2',
+            'CGNSSINFO_sat_gps_count': '06',
+            'CGNSSINFO_sat_glonass_count': '04',
+            'CGNSSINFO_sat_beidou_count': '00',
+            'CGNSSINFO_lat_degrees': '4629.837221',       # 46°17'54.1"N
+            'CGNSSINFO_lat_dir': 'N',
+            'CGNSSINFO_log_degrees': '01120.204242',      # 11°12'15.3"E
+            'CGNSSINFO_log_dir': 'E',
+            'CGNSSINFO_alt': '274.9',
+            'CGNSSINFO_speed': '0.0',
+            'CGNSSINFO_course': '-1',
+            'CGNSSINFO_pdop': '1.3',
+            'CGNSSINFO_hdop': '1.0',
+            'CGNSSINFO_vdop': '0.8',
+            'AT+CPIN': 'NoSIM',
+
         }
 
     def refresh(self, reset_data=False) -> bool:
         self._data = {
-            'SmartUPS': 'V3.2P',
-            'Vin': 'GOOD' if random.randint(0, 1) else "NG",
-            'BATCAP': max(min(regenerateValue(self._data['BATCAP'], 1), 100), 0),
-            'Vout': max(min(regenerateValue(self._data['Vout'], 10), 5400), 5100),
+            'AT+CGMI': 'SIMCOM INCORPORATED',
+            'AT+CGMM': 'SIMCOM_SIM7600E-H',
+            'AT+CGSN': '860147054839863',
+            'AT+CSUB': 'B04V03',
+            'AT+CSUB_B': 'MDM9x07_LE20_S_22_V1.03_210527',
+            'AT+CGMR': 'LE20B04SIM7600M22',
+            'AT+CSQ_rssi': regenerateValueMaxMin(self._data['AT+CSQ_rssi'], 1, 0, 199),
+            'AT+CSQ_ber': regenerateValueMaxMin(self._data['AT+CSQ_ber'], 1, 0, 99),
+            'CGPSINFO_lat_degrees': regenerateValueMaxMin(self._data['CGPSINFO_lat_degrees'], 0.01, 0, 9000),
+            'CGPSINFO_lat_dir': 'N',    # 'S' or "N" if random.randint(0, 1) else "N",
+            'CGPSINFO_log_degrees': regenerateValueMaxMin(self._data['CGPSINFO_log_degrees'], 0.01, 0, 18000),
+            'CGPSINFO_log_dir': 'E',    # 'W' or "E" if random.randint(0, 1) else "W",
+            'CGPSINFO_alt': regenerateValueMaxMin(self._data['CGPSINFO_alt'], 0.1, 0, 500),
+            'CGPSINFO_speed': regenerateValueMaxMin(self._data['CGPSINFO_speed'], 0.1, 0, 20),
+            'CGPSINFO_course': regenerateValueMaxMin(self._data['CGPSINFO_course'], 0.1, 0, 360),
+            'CGNSSINFO_mode': '2',      # '3' or "2" if random.randint(0, 1) else "3",
+            'CGNSSINFO_sat_gps_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_gps_count'], 1, 0, 12),
+            'CGNSSINFO_sat_glonass_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_glonass_count'], 1, 0, 12),
+            'CGNSSINFO_sat_beidou_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_beidou_count'], 1, 0, 12),
+            'CGNSSINFO_lat_degrees': regenerateValueMaxMin(self._data['CGNSSINFO_lat_degrees'], 0.01, 0, 9000),
+            'CGNSSINFO_lat_dir': 'N',   # 'S' or "N" if random.randint(0, 1) else "N",
+            'CGNSSINFO_log_degrees': regenerateValueMaxMin(self._data['CGNSSINFO_log_degrees'], 0.01, 0, 18000),
+            'CGNSSINFO_log_dir': 'E',   # 'W' or "E" if random.randint(0, 1) else "W",
+            'CGNSSINFO_alt': regenerateValueMaxMin(self._data['CGNSSINFO_alt'], 0.1, 0, 500),
+            'CGNSSINFO_speed': regenerateValueMaxMin(self._data['CGNSSINFO_speed'], 0.1, 0, 20),
+            'CGNSSINFO_course': regenerateValueMaxMin(self._data['CGNSSINFO_course'], 0.1, 0, 360),
+            'CGNSSINFO_pdop': regenerateValueMaxMin(self._data['CGNSSINFO_pdop'], 0.1, 0, 4),
+            'CGNSSINFO_hdop': regenerateValueMaxMin(self._data['CGNSSINFO_hdop'], 0.1, 0, 4),
+            'CGNSSINFO_vdop': regenerateValueMaxMin(self._data['CGNSSINFO_vdop'], 0.1, 0, 4),
+            'AT+CPIN': 'NoSIM',
         }
         return True
 

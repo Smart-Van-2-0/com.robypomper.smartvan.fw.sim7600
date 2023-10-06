@@ -15,19 +15,19 @@ from fw_sim7600.dbus.daemon import *
 from fw_sim7600.sim7600.mappings import PROPS_CODES, CALC_PROPS_CODES
 
 """ Name of the current script """
-FW_NAME = "FW UPS Pack v3"
+FW_NAME = "FW SIM7600"
 """ Description of the current script """
 FW_DESC = "Python script as {} firmware".format(FW_NAME)
 """ Group of the current script """
-FW_GROUP = "com.robypomper.smartvan.fw.ups"
+FW_GROUP = "com.robypomper.smartvan.fw.sim7600"
 """ Version of the current script """
 FW_VERSION = "1.0.0-DEV"
 """ Value to use as default serial port """
 DEF_SERIAL_PORT = "/dev/ttyAMA0"
 """ Value to use as default serial port speed """
-DEF_SERIAL_SPEED = 9600
+DEF_SERIAL_SPEED = 115200
 """ Value to use as default DBus name """
-DEF_DBUS_NAME = "com.upspack"
+DEF_DBUS_NAME = "com.simcom"
 """ Value to use as default DBus object path, if none  """
 DEF_DBUS_OBJ_PATH = None
 """ Value to use as default DBus object interface """
@@ -173,7 +173,7 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
             exit(EXIT_INIT_TERMINATED)
 
     if dev.is_connected:
-        logger.info("Connected to {} device version '{}'.".format("SmartUPS", dev.device_pid))
+        logger.info("Connected to {} device model '{}'.".format("SIM7600", dev.device_pid))
     else:
         logger.info("Initialized Device at port '{}', but not connected.".format(port))
     return dev
