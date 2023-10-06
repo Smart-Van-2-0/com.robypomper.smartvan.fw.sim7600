@@ -12,8 +12,8 @@ except:
     print("WARN: RPi.GPIO module disabled.")
     _gpio_loaded = False
 
-from .mappings import *
-from ..device_serial import DeviceSerial
+from fw_sim7600.sim7600.mappings import *
+from fw_sim7600.device_serial import DeviceSerial
 
 logger = logging.getLogger()
 
