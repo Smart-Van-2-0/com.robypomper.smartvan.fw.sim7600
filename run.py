@@ -153,7 +153,6 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
 
     logger.info("Connecting to '{} at {}'...".format(port, speed))
     dev = Device(port, speed, False)
-    dev_global = dev
     logger.debug("Read first data from device at '{}' port...".format(port))
     dev.refresh()
 
@@ -176,17 +175,39 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
         logger.info("Connected to {} device model '{}'.".format("SIM7600", dev.device_pid))
     else:
         logger.info("Initialized Device at port '{}', but not connected.".format(port))
+
     return dev
 
 
 def _init_dbus_object(dbus_name, dev_id, dbus_obj_path, dbus_iface) -> DBusObject:
     """ Init and configure DBus object. """
 
+    global dev_global
+
     try:
-        return DBusObject(dbus_name, dev_id, dbus_obj_path, dbus_iface)
+        return DBusObject(dev_global, dbus_name, dev_id, dbus_obj_path, dbus_iface)
     except NotImplementedError as err:
         logger.fatal("Error initializing DBus object: {}".format(err))
         exit(EXIT_INIT_DBUS)
+
+
+def _publish_dbus_object(dbus, dbus_obj):
+    global must_shutdown
+
+    while not must_shutdown:
+        try:
+            dbus_obj.publish(dbus)
+            break
+
+        except Exception as err:
+            if str(err).find("An object is already exported") == 0:
+                logger.debug("Object already published on DBus, retry in {} seconds.".format(CONN_RETRY))
+                time.sleep(CONN_RETRY)
+            else:
+                raise RuntimeError("Can't publish the object on DBus") from err
+
+    if must_shutdown:
+        logger.warning("Received terminate signal during Object publication on DBus, exit.")
 
 
 def _main_loop(dev, dbus_obj):
@@ -198,6 +219,8 @@ def _main_loop(dev, dbus_obj):
     logger.info("Start {} Main Loop. Press (Ctrl+C) to quit.".format(FW_NAME))
     must_shutdown = False
     while not must_shutdown:
+        logger.debug("Start fetch/pull device")
+
         try:
             dev.refresh(True)
             # print("{}/{}# [{}CONNECTED]: {}".format(dev.device_model, dev.device_serial,
@@ -216,6 +239,8 @@ def _main_loop(dev, dbus_obj):
             logger.error("Unknown error on Main Loop: {}".format(unknown_error))
             import traceback
             traceback.print_exc()
+
+        logger.debug("End fetch/pull device")
 
         try:
             time.sleep(LOOP_SLEEP if dev.is_connected else CONN_RETRY)
@@ -325,12 +350,14 @@ def __handle_kill_signals(signo, _stack_frame):
 
 def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=False):
     """ Initialize a Device to read data and a DBus Object to share collected data. """
+    global dev_global
+
     _register_kill_signals()
 
     # Init Device
     try:
-        dev = _init_device(port, speed, True, simulate_dev)
-        if not dev.is_connected and must_shutdown:
+        dev_global = _init_device(port, speed, True, simulate_dev)
+        if not dev_global.is_connected and must_shutdown:
             exit(0)
     except Exception as err:
         logger.warning("Error on initializing Device: " + str(err))
@@ -340,8 +367,8 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
 
     # Init DBus Object
     try:
-        obj_path = obj_path if obj_path is not None else "/" + dev.device_type_code
-        dev_id = dev.device_pid
+        obj_path = obj_path if obj_path is not None else "/" + dev_global.device_type_code
+        dev_id = dev_global.device_pid
         dbus_obj = _init_dbus_object(dbus_name, dev_id, obj_path, dbus_iface)
     except Exception as err:
         logger.warning("Error on initializing DBus Object: " + str(err))
@@ -349,10 +376,21 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
         traceback.print_exc()
         exit(-1)
 
-    # Publish on DBus
+    # Publish on init DBus
     try:
         os.environ['DISPLAY'] = "0.0"
         dbus = get_dbus()
+    except Exception as err:
+        logger.warning("Error on init DBus: " + str(err))
+        import traceback
+        traceback.print_exc()
+        exit(-1)
+
+    start_dbus_thread()
+
+    # Publish on DBus
+    try:
+        _publish_dbus_object(dbus, dbus_obj)
     except Exception as err:
         logger.warning("Error on publish DBus Object: " + str(err))
         try:
@@ -363,11 +401,8 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
         traceback.print_exc()
         exit(-1)
 
-    start_dbus_thread()
-    dbus_obj.publish(dbus)
-
     try:
-        _main_loop(dev, dbus_obj)
+        _main_loop(dev_global, dbus_obj)
     except Exception as err:
         logger.warning("Error on main thread: " + str(err))
         exit(-1)
