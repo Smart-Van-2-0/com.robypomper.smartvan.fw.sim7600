@@ -37,9 +37,9 @@ PROPS_CODES = {
                   "parser": props_parser_str},
     "AT+CGMR": {"name": "version_firmware", "desc": "Product's firmware version",
                 "parser": props_parser_str},
-    "AT+CSQ_rssi": {"name": "network_signal_quality", "desc": "Cellular network quality as signal strength indication <rssi>",
+    "AT+CSQ_rssi": {"name": "network_signal_quality_rssi", "desc": "Cellular network quality as signal strength indication <rssi>",
                "parser": props_parser_int},
-    "AT+CSQ_ber": {"name": "network_signal_quality", "desc": "Cellular network quality as channel bit error rate <ber>",
+    "AT+CSQ_ber": {"name": "network_signal_quality_ber", "desc": "Cellular network quality as channel bit error rate <ber>",
                "parser": props_parser_int},
     "AT+CPIN": {"name": "network_sim_status", "desc": "SIM status",
                 "parser": props_parser_str},
@@ -91,6 +91,10 @@ PROPS_CODES = {
     "CGNSSINFO_sat_beidou_count": {"name": "pos_gnss_sat_beidou_count",
                                    "desc": "BEIDOU satellite valid numbers scope: 00-12",
                                    "parser": props_parser_int},
+
+    "power_module_state": {"name": "power_module_state",
+                                   "desc": "State of the module: true is power on, otherwise is power off",
+                                   "parser": props_parser_bool},
 }
 
 CALC_PROPS_CODES = {

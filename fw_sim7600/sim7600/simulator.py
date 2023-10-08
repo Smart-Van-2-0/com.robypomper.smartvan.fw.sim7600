@@ -1,8 +1,12 @@
 #!/usr/bin/python3
+import logging
 
 from .device import Device
 from .mappings import *
 from ..commons import regenerateValueMaxMin
+
+
+logger = logging.getLogger()
 
 
 class DeviceSimulator(Device):
@@ -40,10 +44,13 @@ class DeviceSimulator(Device):
             'CGNSSINFO_hdop': '1.0',
             'CGNSSINFO_vdop': '0.8',
             'AT+CPIN': 'NoSIM',
-
+            'power_module_state': str(self._power_state),
         }
 
     def refresh(self, reset_data=False) -> bool:
+        if not self._power_state:
+            return False
+
         self._data = {
             'AT+CGMI': 'SIMCOM INCORPORATED',
             'AT+CGMM': 'SIMCOM_SIM7600E-H',
@@ -75,8 +82,21 @@ class DeviceSimulator(Device):
             'CGNSSINFO_hdop': regenerateValueMaxMin(self._data['CGNSSINFO_hdop'], 0.1, 0, 4),
             'CGNSSINFO_vdop': regenerateValueMaxMin(self._data['CGNSSINFO_vdop'], 0.1, 0, 4),
             'AT+CPIN': 'NoSIM',
+            'power_module_state': str(self._power_state),
         }
         return True
+
+    def power_module(self, value: bool):
+        logger.info("EXECUTE power_module with {} val".format(value))
+        if self._power_state == value:
+            logger.debug("power_module already power ".format("ON" if value else "OFF"))
+            return
+
+        self._power_state = value
+        if self._power_state:
+            logger.debug('SIM7600X is ready')
+        else:
+            logger.debug('SIM7600X is down')
 
 
 if __name__ == '__main__':
