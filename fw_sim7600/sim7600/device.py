@@ -4,6 +4,12 @@ from typing import Optional
 
 import serial
 import time
+try:
+    import RPi.GPIO as GPIO
+    _gpio_loaded = True
+except:
+    print("WARN: RPi.GPIO module disabled.")
+    _gpio_loaded = False
 
 from .mappings import *
 from ..device_serial import DeviceSerial
@@ -21,14 +27,19 @@ class Device(DeviceSerial):
     RETRY_TIME_SEC = 1.0
     RESPONSE_WAIT_TIME = 0.01
     AT_CMD_TIMEOUT = 1.0
+    POWER_PIN = 6
 
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 115200, auto_refresh=True):
         super().__init__(device, speed, None, auto_refresh)
 
         self.cached_version = None
 
+        self._power_state = True
+
     def _get_data(self) -> [bytes]:
         """ Returns a PDU array, one entry per line."""
+        if not self._power_state:
+            return []
 
         data = []
         try:
@@ -224,6 +235,7 @@ class Device(DeviceSerial):
             count += 1
         if not at_cpin_set:
             self._data['AT+CPIN'] = "NoSIM"
+        self._data['power_module_state'] = str(self._power_state)
 
         # for k in self._data.keys():
         #     print("'{}': '{}',".format(k, self._data[k]))
@@ -248,6 +260,45 @@ class Device(DeviceSerial):
                 self.cached_type = PID[self.device_pid]['type']
 
         return self.cached_type if self.cached_type is not None else DEV_TYPE_UNKNOWN
+
+    def power_module(self, value: bool):
+        logger.info("EXECUTE power_module with {} val".format(value))
+        if self._power_state == value:
+            logger.debug("power_module already power ".format("ON" if value else "OFF"))
+            return
+
+        if value:
+            self._power_on()
+        else:
+            self._power_down()
+
+    def _power_on(self):
+        if _gpio_loaded:
+            logger.debug('SIM7600X is starting:')
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setwarnings(False)
+            GPIO.setup(self.POWER_PIN, GPIO.OUT)
+            time.sleep(0.1)
+            GPIO.output(self.POWER_PIN, GPIO.HIGH)
+            time.sleep(2)
+            GPIO.output(self.POWER_PIN, GPIO.LOW)
+            time.sleep(20)
+            with serial.Serial(self.device, self.speed, timeout=1) as s:
+                s.flushInput()
+            logger.debug('SIM7600X is ready')
+            self._power_state = True
+
+    def _power_down(self):
+        if _gpio_loaded:
+            logger.debug('SIM7600X is shutdown:')
+            GPIO.output(self.POWER_PIN, GPIO.HIGH)
+            time.sleep(3)
+            GPIO.output(self.POWER_PIN, GPIO.LOW)
+            time.sleep(18)
+            logger.debug('SIM7600X is down')
+            self._power_state = True
+
+
 
 
 if __name__ == '__main__':

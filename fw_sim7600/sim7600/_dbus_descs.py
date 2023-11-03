@@ -23,7 +23,10 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
     <property name="version_firmware" type="s" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
-    <property name="network_signal_quality" type="d" access="read">
+    <property name="network_signal_quality_rssi" type="d" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
+    </property>
+    <property name="network_signal_quality_ber" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
     <property name="network_sim_status" type="s" access="read">
@@ -94,6 +97,13 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
     <property name="pos_gnss_sat_beidou_count" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
     </property>
+    
+    <property name="power_module_state" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal" value="true"/>
+    </property>
+    <method name="power_module">
+      <arg direction="in" name="value" type="b"/>
+    </method>
     
   </interface>
 </node>
