@@ -9,7 +9,7 @@ from pydbus import SessionBus
 
 bus = SessionBus()
 #the_object = bus.get("com.ioexp", "/io_expansion_board")
-the_object = bus.get("com.simcom", "/sim7600")
+the_object = bus.get("com.waveshare.sim7600", "/sim7600")
 
 # call the methods and print the results
 reply1 = the_object.power_module(False)
