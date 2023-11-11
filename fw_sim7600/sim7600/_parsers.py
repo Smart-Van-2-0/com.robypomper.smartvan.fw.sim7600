@@ -8,6 +8,7 @@ def props_parser_vin(raw_value: str) -> bool:
         elif raw_value.upper() == "NG":
             return False
         else:
-            raise ValueError("Can't cast '{}' into {}, invalid value".format(raw_value, "float"))
+            raise ValueError("Can't cast '{}' into {}, invalid value"
+                             .format(raw_value, "float"))
     except Exception:
         raise ValueError("Can't cast '{}' into {}".format(raw_value, "float"))
