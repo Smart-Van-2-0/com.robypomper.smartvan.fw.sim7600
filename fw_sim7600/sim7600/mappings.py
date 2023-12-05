@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 from fw_sim7600.commons import *
-from ._definitions import *
-from ._dbus_descs import *
-from ._parsers import *
+from fw_sim7600.sim7600._definitions import *
+from fw_sim7600.sim7600._dbus_descs import *
+from fw_sim7600.sim7600._parsers import *
 
 # Given an PID, this object returns all his info and meta-data
 PID = {
