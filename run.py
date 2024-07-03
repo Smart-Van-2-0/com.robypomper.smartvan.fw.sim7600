@@ -6,28 +6,27 @@ import argparse
 from datetime import datetime, timedelta
 import time
 import signal
-from typing import Optional
 
-from fw_upspack_v3.ups.device import Device
-from fw_upspack_v3.ups.simulator import DeviceSimulator
-from fw_upspack_v3.dbus.obj import DBusObject
-from fw_upspack_v3.dbus.daemon import *
-from fw_upspack_v3.ups.mappings import PROPS_CODES, CALC_PROPS_CODES
+from fw_sim7600.sim7600.device import Device
+from fw_sim7600.sim7600.simulator import DeviceSimulator
+from fw_sim7600.dbus.obj import DBusObject
+from fw_sim7600.dbus.daemon import *
+from fw_sim7600.sim7600.mappings import PROPS_CODES, CALC_PROPS_CODES
 
 """ Name of the current script """
-FW_NAME = "FW UPS Pack v3"
+FW_NAME = "FW SIM7600"
 """ Description of the current script """
 FW_DESC = "Python script as {} firmware".format(FW_NAME)
 """ Group of the current script """
-FW_GROUP = "com.robypomper.smartvan.fw.ups"
+FW_GROUP = "com.robypomper.smartvan.fw.sim7600"
 """ Version of the current script """
-FW_VERSION = "1.0.0-DEV"
+FW_VERSION = "1.0.0"
 """ Value to use as default serial port """
 DEF_SERIAL_PORT = "/dev/ttyAMA0"
 """ Value to use as default serial port speed """
-DEF_SERIAL_SPEED = 9600
+DEF_SERIAL_SPEED = 115200
 """ Value to use as default DBus name """
-DEF_DBUS_NAME = "com.upspack"
+DEF_DBUS_NAME = "com.waveshare.sim7600"
 """ Value to use as default DBus object path, if none  """
 DEF_DBUS_OBJ_PATH = None
 """ Value to use as default DBus object interface """
@@ -49,7 +48,7 @@ LOGGER_DATE_FORMAT_DEV = "%H:%M:%S"
 """ Seconds between each serial connection retry (on initialization but also on device disconnection """
 CONN_RETRY = 5
 """ Seconds that the main loop sleeps before next interation (print or update dbus object's value) """
-LOOP_SLEEP = 1
+LOOP_SLEEP = 10
 """ Exit value on success (exit required by the user) """
 EXIT_SUCCESS = 0
 """ Exit value on initialization halted by the user because the serial device not available (required by the user) """
@@ -75,20 +74,27 @@ def _cli_args():
 
     parser = argparse.ArgumentParser(description=FW_DESC)
     group01 = parser.add_argument_group()
-    group01.add_argument('--port', default=DEF_SERIAL_PORT,
-                         help='Serial port')
-    group01.add_argument('--speed', type=int, default=DEF_SERIAL_SPEED,
-                         help='Serial port speed')
-    group01.add_argument('--simulate', default=False, action="store_true", required=False,
-                         help='Simulate a Device with id \'0xA060\'')
+    group01.add_argument("--port", default=DEF_SERIAL_PORT,
+                         help="Serial port name "
+                              "(default: {})".format(DEF_SERIAL_PORT))
+    group01.add_argument("--speed", type=int, default=DEF_SERIAL_SPEED,
+                         help="Serial port speed "
+                              "(default: {})".format(DEF_SERIAL_SPEED))
+    group01.add_argument("--simulate", default=False,
+                         action="store_true", required=False,
+                         help="Simulate a UPS Pack V3 Device "
+                              "(default: False)")
 
     group02 = parser.add_argument_group()
-    group02.add_argument('--dbus-name', default=DEF_DBUS_NAME,
-                         help='DBus name')
-    group02.add_argument('--dbus-obj-path', default=DEF_DBUS_OBJ_PATH,
-                         help='DBus object path (if None, the device type will be used, if empty nothing will be used)')
-    group02.add_argument('--dbus-iface', default=DEF_DBUS_IFACE,
-                         help='DBus object\'s interface')
+    group02.add_argument("--dbus-name", default=DEF_DBUS_NAME,
+                         help="DBus name to connect to "
+                              "(default: {})".format(DEF_DBUS_NAME))
+    group02.add_argument("--dbus-obj-path", default=DEF_DBUS_OBJ_PATH,
+                         help="DBus object path to use for object publication "
+                              "(Default: current device's `device_type_code`)")
+    group02.add_argument("--dbus-iface", default=DEF_DBUS_IFACE,
+                         help="DBus object\'s interface "
+                              "(Default: current device's `dbus_iface`)")
 
     group03 = parser.add_argument_group()
     group03.add_argument("-v", "--version", action="store_true", required=False,
@@ -96,7 +102,7 @@ def _cli_args():
 
     group04 = parser.add_argument_group()
     group04.add_argument("--dev", action="store_true",
-                         help="Enable development mode, increase logged messages info")
+                         help="Enable development mode, increase log messages")
     group04.add_argument("--debug", action="store_true",
                          help="Set log level to debug")
     group04.add_argument("--quiet", action="store_true",
@@ -148,45 +154,66 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
     global must_shutdown, dev_global
 
     if simulate_dev:
-        logger.debug("Simulate device '{} at {}'...".format(port, speed))
+        logger.debug("Simulate device")
         return DeviceSimulator(port, speed)
 
     logger.info("Connecting to '{} at {}'...".format(port, speed))
     dev = Device(port, speed, False)
-    dev_global = dev
-    logger.debug("Read first data from device at '{}' port...".format(port))
+    logger.debug("Read first data from device...")
     dev.refresh()
 
     if must_shutdown:
         logger.warning("Received terminate signal during Device initialization, exit.")
     elif not dev.is_connected and wait_connection:
-        logger.warning("Port '{}' not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(port, CONN_RETRY))
+        logger.warning("Device not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(CONN_RETRY))
         try:
             must_shutdown = False
             while not dev.is_connected and not must_shutdown:
                 time.sleep(CONN_RETRY)
                 dev.refresh()
                 if not dev.is_connected:
-                    logger.debug("Port '{}' still not available, retry in {} seconds.".format(port, CONN_RETRY))
+                    logger.debug("Device still not available, retry in {} seconds.".format(CONN_RETRY))
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
             exit(EXIT_INIT_TERMINATED)
 
     if dev.is_connected:
-        logger.info("Connected to {} device version '{}'.".format("SmartUPS", dev.device_pid))
+        logger.info("Connected to Device '{}'.".format(dev.device_pid))
     else:
-        logger.info("Initialized Device at port '{}', but not connected.".format(port))
+        logger.info("Initialized Device, but not connected.")
+
     return dev
 
 
 def _init_dbus_object(dbus_name, dev_id, dbus_obj_path, dbus_iface) -> DBusObject:
     """ Init and configure DBus object. """
 
+    global dev_global
+
     try:
-        return DBusObject(dbus_name, dev_id, dbus_obj_path, dbus_iface)
+        return DBusObject(dev_global, dbus_name, dev_id, dbus_obj_path, dbus_iface)
     except NotImplementedError as err:
         logger.fatal("Error initializing DBus object: {}".format(err))
         exit(EXIT_INIT_DBUS)
+
+
+def _publish_dbus_object(dbus, dbus_obj):
+    global must_shutdown
+
+    while not must_shutdown:
+        try:
+            dbus_obj.publish(dbus)
+            break
+
+        except Exception as err:
+            if str(err).find("An object is already exported") == 0:
+                logger.debug("Object already published on DBus, retry in {} seconds.".format(CONN_RETRY))
+                time.sleep(CONN_RETRY)
+            else:
+                raise RuntimeError("Can't publish the object on DBus") from err
+
+    if must_shutdown:
+        logger.warning("Received terminate signal during Object publication on DBus, exit.")
 
 
 def _main_loop(dev, dbus_obj):
@@ -198,6 +225,9 @@ def _main_loop(dev, dbus_obj):
     logger.info("Start {} Main Loop. Press (Ctrl+C) to quit.".format(FW_NAME))
     must_shutdown = False
     while not must_shutdown:
+        logger.info("  ==== ==== ==== ====")
+        logger.debug("Start fetch/pull device")
+
         try:
             dev.refresh(True)
             # print("{}/{}# [{}CONNECTED]: {}".format(dev.device_model, dev.device_serial,
@@ -217,8 +247,14 @@ def _main_loop(dev, dbus_obj):
             import traceback
             traceback.print_exc()
 
+        logger.debug("End fetch/pull device")
+
+        sleepTime = LOOP_SLEEP if dev.is_connected else CONN_RETRY
         try:
-            time.sleep(LOOP_SLEEP if dev.is_connected else CONN_RETRY)
+            for i in range(sleepTime):
+                if must_shutdown:
+                    break
+                time.sleep(1)
 
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
@@ -253,6 +289,7 @@ def _process_property(dev, dbus_obj, property_code):
             'time': datetime.now()
         }
         dbus_obj.update_property(property_name, property_value)
+        logger.info("R ==> '{:<16}={}'".format(property_name, "% 6.2f" % property_value))
         _update_property_derivatives(dbus_obj, property_name)
 
     except ValueError:
@@ -296,6 +333,8 @@ def _update_property_derivatives(dbus_obj, property_name):
                 }
                 # Update property
                 dbus_obj.update_property(c_property_name, c_property_value)
+                logger.info("C ==> '{:<16}={}'".format(c_property_name, "% 6.2f" % c_property_value))
+
                 _update_property_derivatives(dbus_obj, c_property_name)
 
         except Exception as err:
@@ -325,12 +364,14 @@ def __handle_kill_signals(signo, _stack_frame):
 
 def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=False):
     """ Initialize a Device to read data and a DBus Object to share collected data. """
+    global dev_global
+
     _register_kill_signals()
 
     # Init Device
     try:
-        dev = _init_device(port, speed, True, simulate_dev)
-        if not dev.is_connected and must_shutdown:
+        dev_global = _init_device(port, speed, True, simulate_dev)
+        if not dev_global.is_connected and must_shutdown:
             exit(0)
     except Exception as err:
         logger.warning("Error on initializing Device: " + str(err))
@@ -340,8 +381,8 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
 
     # Init DBus Object
     try:
-        obj_path = obj_path if obj_path is not None else "/" + dev.device_type_code
-        dev_id = dev.device_pid
+        obj_path = obj_path if obj_path is not None else "/" + dev_global.device_type_code
+        dev_id = dev_global.device_pid
         dbus_obj = _init_dbus_object(dbus_name, dev_id, obj_path, dbus_iface)
     except Exception as err:
         logger.warning("Error on initializing DBus Object: " + str(err))
@@ -349,10 +390,21 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
         traceback.print_exc()
         exit(-1)
 
-    # Publish on DBus
+    # Publish on init DBus
     try:
         os.environ['DISPLAY'] = "0.0"
         dbus = get_dbus()
+    except Exception as err:
+        logger.warning("Error on init DBus: " + str(err))
+        import traceback
+        traceback.print_exc()
+        exit(-1)
+
+    start_dbus_thread()
+
+    # Publish on DBus
+    try:
+        _publish_dbus_object(dbus, dbus_obj)
     except Exception as err:
         logger.warning("Error on publish DBus Object: " + str(err))
         try:
@@ -363,11 +415,8 @@ def main(port, speed, dbus_name, obj_path=None, dbus_iface=None, simulate_dev=Fa
         traceback.print_exc()
         exit(-1)
 
-    start_dbus_thread()
-    dbus_obj.publish(dbus)
-
     try:
-        _main_loop(dev, dbus_obj)
+        _main_loop(dev_global, dbus_obj)
     except Exception as err:
         logger.warning("Error on main thread: " + str(err))
         exit(-1)
