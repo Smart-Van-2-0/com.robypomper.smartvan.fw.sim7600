@@ -49,7 +49,7 @@ LOGGER_DATE_FORMAT_DEV = "%H:%M:%S"
 """ Seconds between each serial connection retry (on initialization but also on device disconnection """
 CONN_RETRY = 5
 """ Seconds that the main loop sleeps before next interation (print or update dbus object's value) """
-LOOP_SLEEP = 1
+LOOP_SLEEP = 10
 """ Exit value on success (exit required by the user) """
 EXIT_SUCCESS = 0
 """ Exit value on initialization halted by the user because the serial device not available (required by the user) """
