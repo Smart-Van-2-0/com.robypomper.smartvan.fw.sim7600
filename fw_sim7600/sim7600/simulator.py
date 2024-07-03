@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import logging
 
-from .device import Device
-from .mappings import *
-from ..commons import regenerateValueMaxMin
+from fw_sim7600.sim7600.device import Device
+from fw_sim7600.sim7600.mappings import *
+from fw_sim7600.commons import regenerateValueMaxMin
 
 
 logger = logging.getLogger()

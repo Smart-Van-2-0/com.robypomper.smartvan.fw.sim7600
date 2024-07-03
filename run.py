@@ -6,7 +6,6 @@ import argparse
 from datetime import datetime, timedelta
 import time
 import signal
-from typing import Optional
 
 from fw_sim7600.sim7600.device import Device
 from fw_sim7600.sim7600.simulator import DeviceSimulator
@@ -21,7 +20,7 @@ FW_DESC = "Python script as {} firmware".format(FW_NAME)
 """ Group of the current script """
 FW_GROUP = "com.robypomper.smartvan.fw.sim7600"
 """ Version of the current script """
-FW_VERSION = "1.0.0-DEV"
+FW_VERSION = "1.0.0"
 """ Value to use as default serial port """
 DEF_SERIAL_PORT = "/dev/ttyAMA0"
 """ Value to use as default serial port speed """
@@ -155,33 +154,33 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
     global must_shutdown, dev_global
 
     if simulate_dev:
-        logger.debug("Simulate device '{} at {}'...".format(port, speed))
+        logger.debug("Simulate device")
         return DeviceSimulator(port, speed)
 
     logger.info("Connecting to '{} at {}'...".format(port, speed))
     dev = Device(port, speed, False)
-    logger.debug("Read first data from device at '{}' port...".format(port))
+    logger.debug("Read first data from device...")
     dev.refresh()
 
     if must_shutdown:
         logger.warning("Received terminate signal during Device initialization, exit.")
     elif not dev.is_connected and wait_connection:
-        logger.warning("Port '{}' not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(port, CONN_RETRY))
+        logger.warning("Device not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(CONN_RETRY))
         try:
             must_shutdown = False
             while not dev.is_connected and not must_shutdown:
                 time.sleep(CONN_RETRY)
                 dev.refresh()
                 if not dev.is_connected:
-                    logger.debug("Port '{}' still not available, retry in {} seconds.".format(port, CONN_RETRY))
+                    logger.debug("Device still not available, retry in {} seconds.".format(CONN_RETRY))
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
             exit(EXIT_INIT_TERMINATED)
 
     if dev.is_connected:
-        logger.info("Connected to {} device model '{}'.".format("SIM7600", dev.device_pid))
+        logger.info("Connected to Device '{}'.".format(dev.device_pid))
     else:
-        logger.info("Initialized Device at port '{}', but not connected.".format(port))
+        logger.info("Initialized Device, but not connected.")
 
     return dev
 
