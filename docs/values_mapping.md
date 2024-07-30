@@ -4,7 +4,7 @@ The properties exposed on the DBus vary depending on
 the [type of device](supported_devices.md). A description of the
 DBus object to be exposed is defined for each type of device. The DBus object
 definitions are specified in the
-[_dbus_descs.py](/fw_sensehat/sense/_dbus_descs.py) file.
+[_dbus_descs.py](/fw_sim7600/sim7600/_dbus_descs.py) file.
 
 During the `main_loop`, this script refresh the device's data and parse any
 property found, if the property value is update the script sends the property
@@ -22,7 +22,7 @@ of an elaboration.
 ### Direct
 
 Direct properties are defined into the `PROPS_CODES` table into
-the [mappings.py](/fw_victron/mappings.py) file.
+the [mappings.py](/fw_sim7600/sim7600/mappings.py) file.
 
 For each property are defined following fields:
 
@@ -65,11 +65,11 @@ For each property are defined following fields:
 | `CGNSSINFO_sat_beidou_count`  | `pos_gnss_sat_beidou_count`   | BEIDOU satellite valid numbers scope: 00-12                   | `props_parser_int`   |
 | `power_module_state`          | `power_module_state`          | State of the module: true is power on, otherwise is power off | `props_parser_bool`  |
 
-Parser methods are defined into [_parsers.py](/fw_sensehat/sense/_parsers.py)
+Parser methods are defined into [_parsers.py](/fw_sim7600/sim7600/_parsers.py)
 file. Depending on which DBus property's they are mapped for, they can return
 different value's types.<br/>
 Custom types are defined into
-the [_definitions.py](/fw_sensehat/sense/_definitions.py) file.
+the [_definitions.py](/fw_sim7600/sim7600/_definitions.py) file.
 
 ### Calculated
 
