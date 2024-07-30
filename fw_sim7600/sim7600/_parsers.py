@@ -40,3 +40,7 @@ def props_parser_lon(raw_value: str) -> bool:
     if raw_value.upper() in ['W', 'WEST']:
         return True
     return False
+
+
+def calc_pos_gnss_sat_count(property_cache):
+    return property_cache['pos_gnss_sat_gps_count']['value']

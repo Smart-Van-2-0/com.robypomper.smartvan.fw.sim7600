@@ -115,6 +115,10 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
+    <property name="pos_gnss_sat_count" type="i" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
     <property name="pos_gnss_sat_gps_count" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>

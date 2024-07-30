@@ -129,4 +129,6 @@ PROPS_CODES = {
 
 CALC_PROPS_CODES = {
     # N/A
+    "pos_gnss_sat_count": {"depends_on": "pos_gnss_sat_gps_count",
+                "calculator": calc_pos_gnss_sat_count},
 }
