@@ -42,7 +42,7 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
        value="true"/>
     </property>
     
-    <property name="pos_gps_lat_dir" type="s" access="read">
+    <property name="pos_gps_lat_dir" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
@@ -50,7 +50,7 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gps_log_dir" type="s" access="read">
+    <property name="pos_gps_log_dir" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
@@ -71,7 +71,7 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
        value="true"/>
     </property>
     
-    <property name="pos_gnss_lat_dir" type="s" access="read">
+    <property name="pos_gnss_lat_dir" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
@@ -79,7 +79,7 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gnss_log_dir" type="s" access="read">
+    <property name="pos_gnss_log_dir" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>

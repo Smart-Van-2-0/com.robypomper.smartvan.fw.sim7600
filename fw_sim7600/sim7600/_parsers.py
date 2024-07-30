@@ -26,3 +26,17 @@ def convert_to_degrees_minutes_seconds(decimal_degrees: float) -> tuple:
     minutes = int(minutes_decimal)
     seconds = (minutes_decimal - minutes) * 60
     return degrees, minutes, seconds
+
+
+# North -> True, South -> False
+def props_parser_lat(raw_value: str) -> bool:
+    if raw_value.upper() in ['N', 'NORTH']:
+        return True
+    return False
+
+
+# West -> True, East -> False
+def props_parser_lon(raw_value: str) -> bool:
+    if raw_value.upper() in ['W', 'WEST']:
+        return True
+    return False
