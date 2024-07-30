@@ -37,7 +37,11 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="network_sim_status" type="s" access="read">
+    <property name="network_sim_status" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
+    <property name="network_sim_status_code" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>

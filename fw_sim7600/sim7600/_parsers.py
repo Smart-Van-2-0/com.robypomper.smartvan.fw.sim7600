@@ -1,5 +1,25 @@
 #!/usr/bin/python3
 
+from fw_sim7600.sim7600._definitions import *
+
+
+def props_parser_sim_status_code(raw_value: str) -> int:
+    try:
+        # remove the '+CPIN: ' prefix
+        raw_code = raw_value.split(': ')[1]
+        for key, status in SIM_STATUSES.items():
+            if raw_code in status['vals']:
+                return key
+        return SIM_STATUSES_UNKNOWN_KEY
+    except Exception:
+        raise ValueError("Can't find {} mapped value for '{}' code".format("SIM_STATUSES", raw_value))
+
+
+def calc_network_sim_status(property_cache):
+    status_code = property_cache['network_sim_status_code']['value']
+    return status_code is SIM_STATUSES_WORKING_KEY
+
+
 def props_parser_gpsinfo_coordinates(raw_value: str) -> int:
     try:
         return convert_to_decimal_degrees(raw_value)

@@ -22,6 +22,7 @@ class DeviceSimulator(Device):
             'AT+CGMR': 'LE20B04SIM7600M22',
             'AT+CSQ_rssi': '2',
             'AT+CSQ_ber': '50',
+            'AT+CPIN': '+CPIN: READY',
             'CGPSINFO_lat_degrees': '4629.837756',
             'CGPSINFO_lat_dir': 'N',
             'CGPSINFO_log_degrees': '01120.203911',
@@ -43,7 +44,6 @@ class DeviceSimulator(Device):
             'CGNSSINFO_pdop': '1.3',
             'CGNSSINFO_hdop': '1.0',
             'CGNSSINFO_vdop': '0.8',
-            'AT+CPIN': 'NoSIM',
             'power_module_state': str(self._power_state),
         }
 
@@ -60,6 +60,7 @@ class DeviceSimulator(Device):
             'AT+CGMR': 'LE20B04SIM7600M22',
             'AT+CSQ_rssi': regenerateValueMaxMin(self._data['AT+CSQ_rssi'], 1, 0, 199),
             'AT+CSQ_ber': regenerateValueMaxMin(self._data['AT+CSQ_ber'], 1, 0, 99),
+            'AT+CPIN': '+CPIN: READY',
             'CGPSINFO_lat_degrees': regenerateValueMaxMin(self._data['CGPSINFO_lat_degrees'], 0.01, 0, 9000),
             'CGPSINFO_lat_dir': 'N',    # 'S' or "N" if random.randint(0, 1) else "N",
             'CGPSINFO_log_degrees': regenerateValueMaxMin(self._data['CGPSINFO_log_degrees'], 0.01, 0, 18000),
@@ -81,7 +82,6 @@ class DeviceSimulator(Device):
             'CGNSSINFO_pdop': regenerateValueMaxMin(self._data['CGNSSINFO_pdop'], 0.1, 0, 4),
             'CGNSSINFO_hdop': regenerateValueMaxMin(self._data['CGNSSINFO_hdop'], 0.1, 0, 4),
             'CGNSSINFO_vdop': regenerateValueMaxMin(self._data['CGNSSINFO_vdop'], 0.1, 0, 4),
-            'AT+CPIN': 'NoSIM',
             'power_module_state': str(self._power_state),
         }
         return True
