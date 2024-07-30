@@ -45,6 +45,10 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
+    <property name="network_sim_provider" type="s" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
     
     <property name="pos_gps_lat_dir" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"

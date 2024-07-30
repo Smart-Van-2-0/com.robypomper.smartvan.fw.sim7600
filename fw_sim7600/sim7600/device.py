@@ -68,6 +68,7 @@ class Device(DeviceSerial):
             data.append(self.send_at(s, 'AT+CGMR', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CSQ', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CPIN?', 'OK', self.AT_CMD_TIMEOUT))
+            data.append(self.send_at(s, 'AT+COPS?', 'OK', self.AT_CMD_TIMEOUT))
             res = []
             for val in data:
                 if val is not None:
@@ -204,6 +205,11 @@ class Device(DeviceSerial):
                 frame_lines = frame.decode().split("\r\n")
                 self._data['AT+CPIN'] = frame_lines[1]
                 at_cpin_set = True
+
+            elif b'AT+COPS' in frame:
+                # AT+COPS...
+                frame_lines = frame.decode().split("\r\n")
+                self._data['AT+COPS'] = frame_lines[1]
 
             elif b'+CGPSINFO:' in frame:
                 # {...}+CGPSINFO: 4629.830411,N,01120.202419,E,051023,185112.0,290.5,0.0,{...}

@@ -49,6 +49,8 @@ PROPS_CODES = {
                    "parser": props_parser_int},
     "AT+CPIN": {"name": "network_sim_status_code", "desc": "SIM status code",
                 "parser": props_parser_sim_status_code},
+    "AT+COPS": {"name": "network_sim_provider", "desc": "SIM provider",
+                "parser": props_parser_sim_provider},
 
     "CGPSINFO_lat_dir": {"name": "pos_gps_lat_dir",
                          "desc": "GPS latitude (N/S)",

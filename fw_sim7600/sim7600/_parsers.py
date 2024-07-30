@@ -15,6 +15,21 @@ def props_parser_sim_status_code(raw_value: str) -> int:
         raise ValueError("Can't find {} mapped value for '{}' code".format("SIM_STATUSES", raw_value))
 
 
+def props_parser_sim_provider(raw_value: str) -> str:
+    try:
+        if '"' not in raw_value:
+            return "-- Unknown Provider --"
+
+        # extract text in apex from the '+COPS: 0,0,"vodafone IT",0' format
+        provider = raw_value.split('"')[1]
+        if provider == "":
+            return "-- Unknown Provider --"
+        return provider
+
+    except Exception:
+        raise ValueError("Can't extract provider name from '{}' response".format(raw_value))
+
+
 def calc_network_sim_status(property_cache):
     status_code = property_cache['network_sim_status_code']['value']
     return status_code is SIM_STATUSES_WORKING_KEY
