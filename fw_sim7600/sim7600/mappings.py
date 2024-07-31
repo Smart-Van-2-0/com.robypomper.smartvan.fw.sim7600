@@ -47,6 +47,8 @@ PROPS_CODES = {
                    "desc": "Cellular network quality as channel bit error "
                            "rate <ber>",
                    "parser": props_parser_int},
+    "AT+CREG": {"name": "network_status_code", "desc": "Network status code",
+                "parser": props_parser_network_status_code},
     "AT+CPIN": {"name": "network_sim_status_code", "desc": "SIM status code",
                 "parser": props_parser_sim_status_code},
     "AT+COPS": {"name": "network_sim_provider", "desc": "SIM provider",
@@ -131,6 +133,12 @@ PROPS_CODES = {
 
 CALC_PROPS_CODES = {
     # N/A
+    "network_registration": {"depends_on": "network_status_code",
+                "calculator": calc_network_registration},
+    "network_searching": {"depends_on": "network_status_code",
+                "calculator": calc_network_searching},
+    "network_roaming": {"depends_on": "network_status_code",
+                "calculator": calc_network_roaming},
     "network_sim_status": {"depends_on": "network_sim_status_code",
                 "calculator": calc_network_sim_status},
     "pos_gnss_sat_count": {"depends_on": "pos_gnss_sat_gps_count",

@@ -67,6 +67,7 @@ class Device(DeviceSerial):
             data.append(self.send_at(s, 'AT+CSUB', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CGMR', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CSQ', 'OK', self.AT_CMD_TIMEOUT))
+            data.append(self.send_at(s, 'AT+CREG?', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CPIN?', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+COPS?', 'OK', self.AT_CMD_TIMEOUT))
             res = []
@@ -199,6 +200,11 @@ class Device(DeviceSerial):
                 values = frame_lines[1][len("CSQ:") + 1:].strip().split(',')
                 self._data['AT+CSQ_rssi'] = values[0]
                 self._data['AT+CSQ_ber'] = values[1]
+
+            elif b'AT+CREG' in frame:
+                # AT+CREG...
+                frame_lines = frame.decode().split("\r\n")
+                self._data['AT+CREG'] = frame_lines[1]
 
             elif b'AT+CPIN' in frame:
                 # AT+CPIN...

@@ -37,6 +37,22 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
+    <property name="network_registration" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
+    <property name="network_searching" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
+    <property name="network_roaming" type="b" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
+    <property name="network_status_code" type="i" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
     <property name="network_sim_status" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>

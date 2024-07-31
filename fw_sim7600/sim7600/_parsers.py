@@ -3,6 +3,14 @@
 from fw_sim7600.sim7600._definitions import *
 
 
+def props_parser_network_status_code(raw_value: str) -> int:
+    try:
+        # remove the '+CREG: 0,' prefix
+        return int(raw_value.split(',')[1])
+    except Exception:
+        raise ValueError("Can't cast '{}' into {}".format(raw_value, "network_status_code"))
+
+
 def props_parser_sim_status_code(raw_value: str) -> int:
     try:
         # remove the '+CPIN: ' prefix
@@ -30,9 +38,24 @@ def props_parser_sim_provider(raw_value: str) -> str:
         raise ValueError("Can't extract provider name from '{}' response".format(raw_value))
 
 
-def calc_network_sim_status(property_cache):
+def calc_network_registration(property_cache) -> bool:
+    status_code = property_cache['network_status_code']['value']
+    return status_code == 1 or status_code == 5
+
+
+def calc_network_searching(property_cache) -> bool:
+    status_code = property_cache['network_status_code']['value']
+    return status_code == 2
+
+
+def calc_network_roaming(property_cache) -> bool:
+    status_code = property_cache['network_status_code']['value']
+    return status_code == 5
+
+
+def calc_network_sim_status(property_cache) -> bool:
     status_code = property_cache['network_sim_status_code']['value']
-    return status_code is SIM_STATUSES_WORKING_KEY
+    return status_code == SIM_STATUSES_WORKING_KEY
 
 
 def props_parser_gpsinfo_coordinates(raw_value: str) -> int:
