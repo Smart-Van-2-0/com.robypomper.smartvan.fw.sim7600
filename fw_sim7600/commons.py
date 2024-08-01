@@ -17,7 +17,7 @@ def props_parser_str(raw_value: str) -> str:
     try:
         return str(raw_value)
     except Exception:
-        raise ValueError("Can't cast '{}' into {}".format(raw_value, "bool"))
+        raise ValueError("Can't cast '{}' into {}".format(raw_value, "str"))
 
 
 def props_parser_bool(raw_value: str) -> bool:

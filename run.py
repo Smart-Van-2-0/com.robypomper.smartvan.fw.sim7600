@@ -289,7 +289,7 @@ def _process_property(dev, dbus_obj, property_code):
             'time': datetime.now()
         }
         dbus_obj.update_property(property_name, property_value)
-        logger.info("R ==> '{:<16}={}'".format(property_name, "% 6.2f" % property_value))
+        logger.info("R ==> {:<16} = '{}'".format(property_name, str(property_value)))
         _update_property_derivatives(dbus_obj, property_name)
 
     except ValueError:
@@ -333,7 +333,7 @@ def _update_property_derivatives(dbus_obj, property_name):
                 }
                 # Update property
                 dbus_obj.update_property(c_property_name, c_property_value)
-                logger.info("C ==> '{:<16}={}'".format(c_property_name, "% 6.2f" % c_property_value))
+                logger.info("C ==> {:<16} = '{}'".format(c_property_name, str(c_property_value)))
 
                 _update_property_derivatives(dbus_obj, c_property_name)
 
