@@ -20,7 +20,7 @@ FW_DESC = "Python script as {} firmware".format(FW_NAME)
 """ Group of the current script """
 FW_GROUP = "com.robypomper.smartvan.fw.sim7600"
 """ Version of the current script """
-FW_VERSION = "1.0.0"
+FW_VERSION = "1.0.1-DEV"
 """ Value to use as default serial port """
 DEF_SERIAL_PORT = "/dev/ttyAMA0"
 """ Value to use as default serial port speed """
