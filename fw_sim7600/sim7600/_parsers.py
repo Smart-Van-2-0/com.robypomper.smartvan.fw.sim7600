@@ -25,9 +25,6 @@ def props_parser_sim_status_code(raw_value: str) -> int:
 
 def props_parser_sim_provider(raw_value: str) -> str:
     try:
-        if '"' not in raw_value:
-            return "-- Unknown Provider --"
-
         # extract text in apex from the '+COPS: 0,0,"vodafone IT",0' format
         provider = raw_value.split('"')[1]
         if provider == "":
@@ -39,17 +36,26 @@ def props_parser_sim_provider(raw_value: str) -> str:
 
 
 def calc_network_registration(property_cache) -> bool:
-    status_code = property_cache['network_status_code']['value']
+    try:
+        status_code = property_cache['network_status_code']['value']
+    except KeyError as err:
+        raise ValueError("Missing required property: {}".format(err))
     return status_code == 1 or status_code == 5
 
 
 def calc_network_searching(property_cache) -> bool:
-    status_code = property_cache['network_status_code']['value']
+    try:
+        status_code = property_cache['network_status_code']['value']
+    except KeyError as err:
+        raise ValueError("Missing required property: {}".format(err))
     return status_code == 2
 
 
 def calc_network_roaming(property_cache) -> bool:
-    status_code = property_cache['network_status_code']['value']
+    try:
+        status_code = property_cache['network_status_code']['value']
+    except KeyError as err:
+        raise ValueError("Missing required property: {}".format(err))
     return status_code == 5
 
 
@@ -174,7 +180,7 @@ def calc_network_sim_status(property_cache) -> bool:
     return status_code == SIM_STATUSES_WORKING_KEY
 
 
-def props_parser_gpsinfo_coordinates(raw_value: str) -> int:
+def props_parser_gpsinfo_coordinates(raw_value: str) -> float:
     try:
         return convert_to_decimal_degrees(raw_value)
 
@@ -217,4 +223,7 @@ def props_parser_lon(raw_value: str) -> bool:
 
 
 def calc_pos_gnss_sat_count(property_cache):
-    return property_cache['pos_gnss_sat_gps_count']['value']
+    try:
+        return property_cache['pos_gnss_sat_gps_count']['value']
+    except KeyError as err:
+        raise ValueError("Missing required property: {}".format(err))
