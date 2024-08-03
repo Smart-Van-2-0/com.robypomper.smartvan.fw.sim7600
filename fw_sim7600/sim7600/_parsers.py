@@ -53,6 +53,136 @@ def calc_network_roaming(property_cache) -> bool:
     return status_code == 5
 
 
+def parse_network_signal_quality_rssi(raw_value: str) -> int:
+    """
+    From https://www.waveshare.com/w/upload/a/af/SIM7500_SIM7600_Series_AT_Command_Manual_V3.00.pdf
+    Page 65 - AT+CSQ
+
+    0 – - 113 dBm or less
+    1 – - 111 dBm
+    2...30 – - 109... - 53 dBm                  56 dBm / 28 levels = 2 dBm/level
+    31 – - 51 dBm or greater
+    99 – not known or not detectable
+    100 – - 116 dBm or less
+    101 – - 115 dBm
+    102…191 – - 114... - 26dBm                  88 dBm / 90 levels = 0.98 dBm/level
+    191 – - 25 dBm or greater
+    199 – not known or not detectable
+    100…199 – expand to TDSCDMA, indicate RSCPreceived
+    """
+
+    try:
+        raw_int = int(raw_value)
+    except Exception:
+        raise ValueError("Can't cast '{}' into {}".format(raw_value, "int"))
+
+    if raw_int == 0:
+        return -113
+    elif raw_int == 1:
+        return -111
+    elif 2 <= raw_int <= 30:
+        return -109 + (raw_int * 2)
+    elif raw_int == 31:
+        return -51
+    elif raw_int == 99:
+        return 0
+    elif raw_int == 100:
+        return -116
+    elif raw_int == 101:
+        return -115
+    elif 102 <= raw_int <= 191:
+        return -114 + (raw_int * 0.98)
+    elif raw_int == 199:
+        return 0
+
+    raise ValueError("Invalid value for RSSI: {}".format(raw_value))
+
+
+def parse_network_signal_quality_ber(raw_value: str) -> float:
+    """
+    From https://www.waveshare.com/w/upload/a/af/SIM7500_SIM7600_Series_AT_Command_Manual_V3.00.pdf
+    Page 65 - AT+CSQ
+
+    0 – <0.01%
+    1 – 0.01% --- 0.1%
+    2 – 0.1% --- 0.5%
+    3 – 0.5% --- 1.0%
+    4 – 1.0% --- 2.0%
+    5 – 2.0% --- 4.0%
+    6 – 4.0% --- 8.0%
+    7 – >=8.0%
+    99 – not known or not detectable
+    """
+
+    try:
+        raw_int = int(raw_value)
+    except Exception:
+        raise ValueError("Can't cast '{}' into {}".format(raw_value, "int"))
+
+    if raw_int == 0:
+        return 0.0
+    elif raw_int == 1:
+        return 0.05
+    elif raw_int == 2:
+        return 0.25
+    elif raw_int == 3:
+        return 0.75
+    elif raw_int == 4:
+        return 1.5
+    elif raw_int == 5:
+        return 3.0
+    elif raw_int == 6:
+        return 6.0
+    elif raw_int == 7:
+        return 10.0
+    elif raw_int == 99:
+        return -1.0
+
+    raise ValueError("Invalid value for BER: {}".format(raw_value))
+
+
+def calc_network_signal_quality(property_cache) -> float:
+    rssi = property_cache['network_signal_quality_rssi']['value']
+    ber = property_cache['network_signal_quality_ber']['value']
+    return _calculate_signal_quality(rssi, ber)
+
+
+def _normalize_rssi(rssi):
+    if rssi == 99 or rssi == 199:
+        return 0  # Not known or not detectable
+    elif rssi <= 31:
+        return (rssi - 0) / (31 - 0)  # Normalize 0-31 to 0-1
+    elif rssi >= 100 and rssi <= 191:
+        return (rssi - 100) / (191 - 100)  # Normalize 100-191 to 0-1
+    else:
+        return 0  # Out of range values
+
+
+def _normalize_ber(ber):
+    if ber == 99:
+        return 0  # Not known or not detectable
+    else:
+        return (7 - ber) / 7  # Invert and normalize 0-7 to 0-1
+
+
+def _calculate_signal_quality(rssi, ber):
+    normalized_rssi = _normalize_rssi(rssi)
+    normalized_ber = _normalize_ber(ber)
+
+    # Assign weights (e.g., 80% for RSSI and 20% for BER)
+    rssi_weight = 0.8
+    ber_weight = 0.2
+
+    # Calculate the signal quality as a weighted average
+    signal_quality = (normalized_rssi * rssi_weight) + (normalized_ber * ber_weight)
+
+    # Convert to percentage
+    signal_quality_percentage = signal_quality * 100
+
+    return signal_quality_percentage
+
+
+
 def calc_network_sim_status(property_cache) -> bool:
     status_code = property_cache['network_sim_status_code']['value']
     return status_code == SIM_STATUSES_WORKING_KEY

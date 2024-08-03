@@ -42,11 +42,11 @@ PROPS_CODES = {
     "AT+CSQ_rssi": {"name": "network_signal_quality_rssi",
                     "desc": "Cellular network quality as signal strength "
                             "indication <rssi>",
-                    "parser": props_parser_int},
+                    "parser": parse_network_signal_quality_rssi},
     "AT+CSQ_ber": {"name": "network_signal_quality_ber",
                    "desc": "Cellular network quality as channel bit error "
                            "rate <ber>",
-                   "parser": props_parser_int},
+                   "parser": parse_network_signal_quality_ber},
     "AT+CREG": {"name": "network_status_code", "desc": "Network status code",
                 "parser": props_parser_network_status_code},
     "AT+CPIN": {"name": "network_sim_status_code", "desc": "SIM status code",
