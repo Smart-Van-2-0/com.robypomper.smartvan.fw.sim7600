@@ -12,11 +12,10 @@ the [Smart Van Project](https://smartvan.johnosproject.org/).
 
 [README](README.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
-Once ran, this script **reads data from the serial specified port then notify
-the DBus with updated values**. The DBus service and his properties depends on
-the model get from the device (using the `AT+CGMM` command). More info 
-on [Supported devices](/docs/supported_devices.md)
-and [value mapping](/docs/values_mapping.md).
+Once ran, this script **sends AT commands and reads their responses using the
+serial specified port then notify the DBus with updated values**. The DBus
+service and his properties depends on the model get from the device (using the
+`AT+CGMM` command). More info on [Supported devices](/docs/supported_devices.md) and [value mapping](/docs/values_mapping.md).
 
 ## Run
 
@@ -122,9 +121,9 @@ Module's files can be grouped in 2 categories:
   class that represent aDBus object to publish
 * [dbus/daemon.py](/fw_sim7600/dbus/daemon.py):
   methods to handle the DBus daemon
-* [commons.py](/fw_sim7600/base/commons.py):
+* [base/commons.py](/fw_sim7600/base/commons.py):
   commons properties parsers and simulator methods
-* [device.py](/fw_sim7600/base/device.py):
+* [base/device.py](/fw_sim7600/base/device.py):
   base class for devices
-* [device_serial.py](/fw_sim7600/base/device_serial.py):
+* [base/device_serial.py](/fw_sim7600/base/device_serial.py):
   base implementation for serial devices
