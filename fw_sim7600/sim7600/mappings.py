@@ -139,6 +139,8 @@ CALC_PROPS_CODES = {
                 "calculator": calc_network_searching},
     "network_roaming": {"depends_on": "network_status_code",
                 "calculator": calc_network_roaming},
+    "network_signal_quality": {"depends_on": ["network_signal_quality_rssi", "network_signal_quality_ber"],
+                "calculator": calc_network_signal_quality},
     "network_sim_status": {"depends_on": "network_sim_status_code",
                 "calculator": calc_network_sim_status},
     "pos_gnss_sat_count": {"depends_on": "pos_gnss_sat_gps_count",

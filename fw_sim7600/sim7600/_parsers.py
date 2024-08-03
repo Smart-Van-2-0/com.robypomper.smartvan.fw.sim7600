@@ -142,44 +142,30 @@ def parse_network_signal_quality_ber(raw_value: str) -> float:
 
 
 def calc_network_signal_quality(property_cache) -> float:
-    rssi = property_cache['network_signal_quality_rssi']['value']
-    ber = property_cache['network_signal_quality_ber']['value']
-    return _calculate_signal_quality(rssi, ber)
+    try:
+        rssi = property_cache['network_signal_quality_rssi']['value']
+        ber = property_cache['network_signal_quality_ber']['value']
+    except KeyError as err:
+        raise ValueError("Missing required property: {}".format(err))
 
+    RSSI_MIN = -113
+    RSSI_MAX = -51
+    BER_MIN = 0
+    BER_MAX = 10
 
-def _normalize_rssi(rssi):
-    if rssi == 99 or rssi == 199:
-        return 0  # Not known or not detectable
-    elif rssi <= 31:
-        return (rssi - 0) / (31 - 0)  # Normalize 0-31 to 0-1
-    elif rssi >= 100 and rssi <= 191:
-        return (rssi - 100) / (191 - 100)  # Normalize 100-191 to 0-1
-    else:
-        return 0  # Out of range values
-
-
-def _normalize_ber(ber):
-    if ber == 99:
-        return 0  # Not known or not detectable
-    else:
-        return (7 - ber) / 7  # Invert and normalize 0-7 to 0-1
-
-
-def _calculate_signal_quality(rssi, ber):
-    normalized_rssi = _normalize_rssi(rssi)
-    normalized_ber = _normalize_ber(ber)
+    # rssi Min = -113, Max = -51
+    # ber Min = 0, Max = 10
+    rssi_percent = (rssi - RSSI_MIN) / (RSSI_MAX - RSSI_MIN)
+    ber_percent = (ber - BER_MIN) / (BER_MAX - BER_MIN)
 
     # Assign weights (e.g., 80% for RSSI and 20% for BER)
-    rssi_weight = 0.8
+    rssi_weight = 1
     ber_weight = 0.2
 
     # Calculate the signal quality as a weighted average
-    signal_quality = (normalized_rssi * rssi_weight) + (normalized_ber * ber_weight)
+    signal_quality = (rssi_percent * rssi_weight) - (ber_percent * ber_weight)
 
-    # Convert to percentage
-    signal_quality_percentage = signal_quality * 100
-
-    return signal_quality_percentage
+    return round(min(signal_quality, 1.0) * 100, 2)
 
 
 
