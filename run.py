@@ -66,7 +66,7 @@ properties_cache = {}
 def _full_version():
     """ Return a string containing the version, name and group from current script. """
 
-    return "{} (Version: {})\n{}".format(FW_NAME, FW_VERSION, FW_GROUP)
+    return "{}:{} (Version: {})".format(FW_GROUP, FW_NAME, FW_VERSION)
 
 
 def _cli_args():
@@ -137,14 +137,15 @@ def _init_logging(dev, debug, quiet):
         logging.getLogger().setLevel(logging.ERROR)
         handler.setLevel(logging.ERROR)
 
-    logger.info(_full_version())
-    logger.info("Execution mode: " + ("QUIET" if quiet else
-                                      "DEV" if dev else
-                                      "DEBUG" if debug else "NORMAL"))
-    logger.info("Execution args: " + str(sys.argv[1:]))
-
     root_logger = logging.getLogger()
     root_logger.addHandler(handler)
+
+    logger.info(_full_version())
+    logger.debug("Execution mode: " + ("QUIET" if quiet else
+                                      "DEV" if dev else
+                                      "DEBUG" if debug else "NORMAL"))
+    logger.debug("Execution args: " + str(sys.argv[1:]))
+
     return root_logger
 
 
