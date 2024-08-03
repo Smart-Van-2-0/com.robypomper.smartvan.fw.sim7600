@@ -37,6 +37,10 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
+    <property name="network_signal_quality" type="d" access="read">
+      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
+       value="true"/>
+    </property>
     <property name="network_registration" type="b" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
@@ -58,10 +62,6 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
        value="true"/>
     </property>
     <property name="network_sim_status_code" type="i" access="read">
-      <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
-       value="true"/>
-    </property>
-    <property name="network_signal_quality" type="d" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
@@ -139,7 +139,7 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gnss_mode" type="d" access="read">
+    <property name="pos_gnss_mode" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
@@ -147,15 +147,15 @@ DEV_DBUS_DESC_SIM7600 = '''<node>
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gnss_sat_gps_count" type="d" access="read">
+    <property name="pos_gnss_sat_gps_count" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gnss_sat_glonass_count" type="d" access="read">
+    <property name="pos_gnss_sat_glonass_count" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
-    <property name="pos_gnss_sat_beidou_count" type="d" access="read">
+    <property name="pos_gnss_sat_beidou_count" type="i" access="read">
       <annotation name="org.freedesktop.DBus.Property.EmitsChangedSignal"
        value="true"/>
     </property>
