@@ -6,24 +6,35 @@ from fw_sim7600.sim7600._dbus_descs import *
 from fw_sim7600.sim7600._parsers import *
 
 # Given an PID, this object returns all his info and meta-data
-PID = {
-    "SIMCOM_SIM7600E-H": {"model": "SIM7600E-H", "type": DEV_TYPE_SIM7600,
-                          "dbus_iface": DEV_IFACE_SIM7600,
-                          "dbus_desc": DEV_DBUS_DESC_SIM7600},
-}
+# SimCom SIM7600G       https://www.simcom.com/product/SIM7600G-1.html
+# SimCom SIM7600A       https://www.simcom.com/product/SIM7600X.html
+# SimCom SIM7600SA      https://www.simcom.com/product/SIM7600X.html
+# SimCom SIM7600E       https://www.simcom.com/product/SIM7600X.html
+# SimCom SIM7600A-H     https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600V-H     https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600SA-H    https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600JC-H    https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600E-H     https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600NA-H    https://simcom.com/product/SIM7600X-H.html
+# SimCom SIM7600G-H     https://simcom.com/product/SIM7600X-H.html
+# All SimCom SIM7600 and SIM7500 models have the same AT commands
 
-# Other models
-# SIMCOM_SIM7600A-H     Cat-4
-# SIMCOM_SIM7600E-H     Cat-4
-# SIMCOM_SIM7600E       Cat-1
-# A_7670E               Cat-1
-# A_7600E               Cat-1
-# SIMCOM_SIM7600SA-H    Cat-4
-# SIMCOM_SIM7600CE      Cat-4
-# SIMCOM_SIM7600CE-CNSE Cat-4
-# SIMCOM_SIM7600CE-JT1S Cat-4
-# A_7600C1              Cat-1
-# SIMCOM_SIM7600G-H     Cat-4
+SIMCOM_SIM7600_All = {'model': 'SIM7600E-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600}
+PID = {
+    "SIMCOM_SIM7600G": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600A": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600SA": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600E": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600A-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600V-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600SA-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600JC-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600E-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600NA-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600G-H": SIMCOM_SIM7600_All,
+}
 
 PROPS_CODES = {
     "AT+CGMI": {"name": "manufacturer", "desc": "Product's manufacturer",
