@@ -1,0 +1,140 @@
+
+(venv) robypomper@roby-hp:~/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.sim7600$ python run.py --simulate --dev
+WARN: RPi.GPIO module disabled.
+[INFO   ] (2024-08-03 17:56:20,063) run.py::143 com.robypomper.smartvan.fw.sim7600:FW SIM7600 (Version: 1.0.1-DEV)
+[DEBUG  ] (2024-08-03 17:56:20,063) run.py::144 Execution mode: DEV
+[DEBUG  ] (2024-08-03 17:56:20,063) run.py::147 Execution args: ['--simulate', '--dev']
+[DEBUG  ] (2024-08-03 17:56:20,063) run.py::158 Simulate device
+[DEBUG  ] (2024-08-03 17:56:20,063) daemon.py::27 Initialize DBus session...
+[DEBUG  ] (2024-08-03 17:56:20,065) daemon.py::31 DBus session initialized successfully
+[INFO   ] (2024-08-03 17:56:20,065) daemon.py::40 DBus Internal Loop starting...
+[INFO   ] (2024-08-03 17:56:20,065) daemon.py::61 DBus Internal Loop started.
+[INFO   ] (2024-08-03 17:56:20,065) obj.py::35 Publish DBus 'com.waveshare.sim7600' interface on 'com.waveshare.sim7600' DBus and '/sim7600' object path.
+[INFO   ] (2024-08-03 17:56:20,068) run.py::226 Start FW SIM7600 Main Loop. Press (Ctrl+C) to quit.
+[INFO   ] (2024-08-03 17:56:20,068) run.py::229   ==== ==== ==== ====
+
+
+[DEBUG  ] (2024-08-03 17:56:20,068) run.py::230 Start fetch/pull device
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.manufacturer = SIMCOM INCORPORATED'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> manufacturer     = 'SIMCOM INCORPORATED'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.model = SIMCOM_SIM7600G-H'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> model            = 'SIMCOM_SIM7600G-H'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.serial_number = 860147054839863'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> serial_number    = '860147054839863'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.version_module = B04V03'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> version_module   = 'B04V03'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.version_chip = MDM9x07_LE20_S_22_V1.03_210527'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> version_chip     = 'MDM9x07_LE20_S_22_V1.03_210527'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.version_firmware = LE20B04SIM7600M22'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> version_firmware = 'LE20B04SIM7600M22'
+[DEBUG  ] (2024-08-03 17:56:20,069) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_signal_quality_rssi = -97'.
+[INFO   ] (2024-08-03 17:56:20,069) run.py::294 R ==> network_signal_quality_rssi = '-97'
+[WARNING] (2024-08-03 17:56:20,070) run.py::353 Error calculating 'network_signal_quality' property: Missing required property: 'network_signal_quality_ber'
+Traceback (most recent call last):
+  File "/home/robypomper/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.sim7600/fw_sim7600/sim7600/_parsers.py", line 171, in calc_network_signal_quality
+    ber = property_cache['network_signal_quality_ber']['value']
+KeyError: 'network_signal_quality_ber'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/robypomper/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.sim7600/run.py", line 328, in _update_property_derivatives
+    c_property_value = CALC_PROPS_CODES[c_property_name]['calculator'](properties_cache)
+  File "/home/robypomper/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.sim7600/fw_sim7600/sim7600/_parsers.py", line 173, in calc_network_signal_quality
+    raise ValueError("Missing required property: {}".format(err))
+ValueError: Missing required property: 'network_signal_quality_ber'
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_signal_quality_ber = 10.0'.
+[INFO   ] (2024-08-03 17:56:20,070) run.py::294 R ==> network_signal_quality_ber = '10.0'
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_signal_quality = 5.81'.
+[INFO   ] (2024-08-03 17:56:20,070) run.py::348 C ==> network_signal_quality = '5.81'
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_sim_status_code = 1'.
+[INFO   ] (2024-08-03 17:56:20,070) run.py::294 R ==> network_sim_status_code = '1'
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_sim_status = True'.
+[INFO   ] (2024-08-03 17:56:20,070) run.py::348 C ==> network_sim_status = 'True'
+[DEBUG  ] (2024-08-03 17:56:20,070) run.py::337 Value cached for 'network_sim_status' <True>
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_sim_provider = China Mobile Com'.
+[INFO   ] (2024-08-03 17:56:20,070) run.py::294 R ==> network_sim_provider = 'China Mobile Com'
+[DEBUG  ] (2024-08-03 17:56:20,070) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_status_code = 0'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> network_status_code = '0'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_registration = False'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::348 C ==> network_registration = 'False'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_searching = False'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::348 C ==> network_searching = 'False'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.network_roaming = False'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::348 C ==> network_roaming  = 'False'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_lat_degrees = 0'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> pos_gps_lat_degrees = '0'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_lat_dir = True'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> pos_gps_lat_dir  = 'True'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_log_degrees = 11.336813516666666'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> pos_gps_log_degrees = '11.336813516666666'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_log_dir = False'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> pos_gps_log_dir  = 'False'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_alt = 276.7576'.
+[INFO   ] (2024-08-03 17:56:20,071) run.py::294 R ==> pos_gps_alt      = '276.7576'
+[DEBUG  ] (2024-08-03 17:56:20,071) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_speed = 0.0276'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gps_speed    = '0.0276'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_course = 0.0'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gps_course   = '0.0'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_mode = 2'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_mode    = '2'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_sat_gps_count = 6'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_sat_gps_count = '6'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_sat_count = 6'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::348 C ==> pos_gnss_sat_count = '6'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_sat_glonass_count = 4'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_sat_glonass_count = '4'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_sat_beidou_count = 0'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_sat_beidou_count = '0'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_lat_degrees = 46.49728868333333'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_lat_degrees = '46.49728868333333'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_lat_dir = True'.
+[INFO   ] (2024-08-03 17:56:20,072) run.py::294 R ==> pos_gnss_lat_dir = 'True'
+[DEBUG  ] (2024-08-03 17:56:20,072) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_log_degrees = 11.336759033333333'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_log_degrees = '11.336759033333333'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_log_dir = False'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_log_dir = 'False'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_alt = 274.9351'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_alt     = '274.9351'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_speed = 0.0215'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_speed   = '0.0215'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_course = 0.0'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_course  = '0.0'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_pdop = 1.2809000000000001'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_pdop    = '1.2809000000000001'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_hdop = 1.0335'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_hdop    = '1.0335'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_vdop = 0.8426'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> pos_gnss_vdop    = '0.8426'
+[DEBUG  ] (2024-08-03 17:56:20,073) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.power_module_state = True'.
+[INFO   ] (2024-08-03 17:56:20,073) run.py::294 R ==> power_module_state = 'True'
+[DEBUG  ] (2024-08-03 17:56:20,073) run.py::252 End fetch/pull device
+
+
+[INFO   ] (2024-08-03 17:56:25,079) run.py::229   ==== ==== ==== ====
+[DEBUG  ] (2024-08-03 17:56:25,079) run.py::230 Start fetch/pull device
+[DEBUG  ] (2024-08-03 17:56:25,079) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_log_degrees = 11.33676685'.
+[INFO   ] (2024-08-03 17:56:25,079) run.py::294 R ==> pos_gps_log_degrees = '11.33676685'
+[DEBUG  ] (2024-08-03 17:56:25,079) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_alt = 276.7533'.
+[INFO   ] (2024-08-03 17:56:25,079) run.py::294 R ==> pos_gps_alt      = '276.7533'
+[DEBUG  ] (2024-08-03 17:56:25,079) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_speed = 0.0'.
+[INFO   ] (2024-08-03 17:56:25,079) run.py::294 R ==> pos_gps_speed    = '0.0'
+[DEBUG  ] (2024-08-03 17:56:25,079) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gps_course = 0.0311'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gps_course   = '0.0311'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_sat_glonass_count = 3'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_sat_glonass_count = '3'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_lat_degrees = 46.497212016666666'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_lat_degrees = '46.497212016666666'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_log_degrees = 11.336684033333333'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_log_degrees = '11.336684033333333'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_alt = 274.97279999999995'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_alt     = '274.97279999999995'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_speed = 0.0555'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_speed   = '0.0555'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_pdop = 1.3285000000000002'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_pdop    = '1.3285000000000002'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_hdop = 1.0407000000000002'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_hdop    = '1.0407000000000002'
+[DEBUG  ] (2024-08-03 17:56:25,080) obj.py::48 Object '/sim7600' property update 'com.waveshare.sim7600.pos_gnss_vdop = 0.8731'.
+[INFO   ] (2024-08-03 17:56:25,080) run.py::294 R ==> pos_gnss_vdop    = '0.8731'
+[DEBUG  ] (2024-08-03 17:56:25,080) run.py::252 End fetch/pull device
