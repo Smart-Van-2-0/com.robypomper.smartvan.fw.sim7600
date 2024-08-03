@@ -3,7 +3,17 @@
 from fw_sim7600.sim7600._definitions import *
 
 
+# Network
+
 def props_parser_network_status_code(raw_value: str) -> int:
+    """
+    0 – not registered, ME is not currently searching a newoperatorto register to
+    1 – registered, home network
+    2 – not registered, but ME is currently searching a newoperatorto register to
+    3 – registration denied
+    4 – unknown
+    5 – registered
+    """
     try:
         # remove the '+CREG: 0,' prefix
         return int(raw_value.split(',')[1])
@@ -12,6 +22,16 @@ def props_parser_network_status_code(raw_value: str) -> int:
 
 
 def props_parser_sim_status_code(raw_value: str) -> int:
+    """
+    READY - ME is not pending for any password
+    SIM PIN - ME is waiting SIM PIN to be given
+    SIM PUK - ME is waiting SIM PUK to be given
+    PH-SIM PIN - ME is waiting phone-to-SIM card passwordtobegiven
+    SIM PIN2 - ME is waiting SIM PIN2 to be given
+    SIM PUK2 - ME is waiting SIM PUK2 to be given
+    PH-NET PIN - ME is waiting network personalization passwordtobe given
+    """
+
     try:
         # remove the '+CPIN: ' prefix
         raw_code = raw_value.split(': ')[1]
@@ -33,30 +53,6 @@ def props_parser_sim_provider(raw_value: str) -> str:
 
     except Exception:
         raise ValueError("Can't extract provider name from '{}' response".format(raw_value))
-
-
-def calc_network_registration(property_cache) -> bool:
-    try:
-        status_code = property_cache['network_status_code']['value']
-    except KeyError as err:
-        raise ValueError("Missing required property: {}".format(err))
-    return status_code == 1 or status_code == 5
-
-
-def calc_network_searching(property_cache) -> bool:
-    try:
-        status_code = property_cache['network_status_code']['value']
-    except KeyError as err:
-        raise ValueError("Missing required property: {}".format(err))
-    return status_code == 2
-
-
-def calc_network_roaming(property_cache) -> bool:
-    try:
-        status_code = property_cache['network_status_code']['value']
-    except KeyError as err:
-        raise ValueError("Missing required property: {}".format(err))
-    return status_code == 5
 
 
 def parse_network_signal_quality_rssi(raw_value: str) -> int:
@@ -145,50 +141,7 @@ def parse_network_signal_quality_ber(raw_value: str) -> float:
     raise ValueError("Invalid value for BER: {}".format(raw_value))
 
 
-def calc_network_signal_quality(property_cache) -> float:
-    try:
-        rssi = property_cache['network_signal_quality_rssi']['value']
-        ber = property_cache['network_signal_quality_ber']['value']
-    except KeyError as err:
-        raise ValueError("Missing required property: {}".format(err))
-
-    # Default values from SIM7600
-    # RSSI_MIN = -116
-    # RSSI_MAX = -25
-    # BER_MIN = 0
-    # BER_MAX = 10
-
-    # Adjusted constants on 2G/3G and LTE requirements
-    RSSI_MIN = -100
-    RSSI_MAX = -60
-    BER_MIN = 0
-    BER_MAX = 10
-
-    if rssi == 0:
-        return -1   # Invalid
-    if rssi <= RSSI_MIN:
-        return 0.0    # No signal
-    if rssi >= RSSI_MAX:
-        rssi = RSSI_MAX
-    rssi_percent = min((rssi - RSSI_MIN) / (RSSI_MAX - RSSI_MIN), 100.0)
-
-    if ber == -1:
-        return round(rssi_percent * 100, 2)
-    if ber <= BER_MIN:
-        return round(rssi_percent * 100, 2)
-    if ber >= BER_MAX:
-        ber = BER_MAX
-    ber_percent = (ber - BER_MIN) / (BER_MAX - BER_MIN)
-    ber_weight = -0.2
-    signal_quality = rssi_percent + (ber_percent * ber_weight)
-    return max(0.0, round(signal_quality * 100, 2))
-
-
-
-def calc_network_sim_status(property_cache) -> bool:
-    status_code = property_cache['network_sim_status_code']['value']
-    return status_code == SIM_STATUSES_WORKING_KEY
-
+# GNSS
 
 def props_parser_gpsinfo_coordinates(raw_value: str) -> float:
     try:
@@ -218,22 +171,21 @@ def convert_to_degrees_minutes_seconds(decimal_degrees: float) -> tuple:
     return degrees, minutes, seconds
 
 
-# North -> True, South -> False
 def props_parser_lat(raw_value: str) -> bool:
+    """
+    North -> True, South -> False
+    """
+
     if raw_value.upper() in ['N', 'NORTH']:
         return True
     return False
 
 
-# West -> True, East -> False
 def props_parser_lon(raw_value: str) -> bool:
+    """
+    West -> True, East -> False
+    """
+
     if raw_value.upper() in ['W', 'WEST']:
         return True
     return False
-
-
-def calc_pos_gnss_sat_count(property_cache):
-    try:
-        return property_cache['pos_gnss_sat_gps_count']['value']
-    except KeyError as err:
-        raise ValueError("Missing required property: {}".format(err))
