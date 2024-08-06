@@ -48,6 +48,7 @@ class DeviceSimulator(Device):
             'CGNSSINFO_vdop': '0.8',
             'power_module_state': str(self._power_state),
         }
+        self._is_connected = True
 
     def refresh(self, reset_data=False) -> bool:
         if not self._power_state:
