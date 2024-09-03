@@ -13,6 +13,8 @@ class DeviceSerial(DeviceAbs):
     """
 
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600, pdu_delimiter="$", auto_refresh=True):
+        super().__init__()
+
         self.device = device
         self.speed = speed
         self.pdu_delimiter_bytes = pdu_delimiter \
@@ -25,7 +27,6 @@ class DeviceSerial(DeviceAbs):
             with serial.Serial(self.device, self.speed, timeout=1) as _s:
                 self._is_connected = True
         self._is_reading = False
-        self._must_terminate = False
 
         self.cached_pid = None
         self.cached_type = None
@@ -41,9 +42,9 @@ class DeviceSerial(DeviceAbs):
         return: True if it read data successfully
         """
         if self._is_reading:
-            while self._is_reading or self._must_terminate:
+            while self._is_reading or self.must_terminate:
                 pass
-            if self._must_terminate:
+            if self.must_terminate:
                 return False
             return self._is_connected
 
@@ -66,9 +67,6 @@ class DeviceSerial(DeviceAbs):
         """ Returns the local device (eg: '/dev/ttyUSB0') used to connect to the serial device """
         return self._is_reading
 
-    def terminate(self):
-        self._must_terminate = True
-
     def _parse_pdu(self, frames):
         """
         Parse the entire PDU and populate the `self._data` array.
@@ -84,18 +82,20 @@ class DeviceSerial(DeviceAbs):
             with serial.Serial(self.device, self.speed, timeout=1) as s:
                 self._is_connected = True
                 # Wait for start of frame
-                while True and not self._must_terminate:
+                while not self.must_terminate:
                     frame = s.readline()
                     if frame.startswith(self.pdu_delimiter_bytes):
                         break
 
                 # slurp all frames
                 frame = b''
-                while not frame.startswith(self.pdu_delimiter_bytes) and not self._must_terminate:
+                while not frame.startswith(self.pdu_delimiter_bytes) and not self.must_terminate:
                     frame = s.readline()
                     data.append(frame)
-                if self._must_terminate:
+
+                if self.must_terminate:
                     self._is_connected = False
+
         except serial.serialutil.SerialException:
             self._is_connected = False
 
