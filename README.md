@@ -8,7 +8,7 @@ the [Smart Van Project](https://smartvan.johnosproject.org/).
 
 **FW Name:** FW SIM7600<br />
 **FW Group:** com.robypomper.smartvan.fw.sim7600<br />
-**FW Version:** 1.0.1
+**FW Version:** 1.0.2-DEV
 
 [README](README.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
