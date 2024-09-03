@@ -95,7 +95,7 @@ class Device(DeviceSerial):
                                           '+CGPSINFO: ',
                                           self.AT_CMD_TIMEOUT)
                 if gps_answer is not None:
-                    if b',,,,,,' in gps_answer:
+                    if gps_answer is not None and b',,,,,,' in gps_answer:
                         gps_answer = None
                         logger.debug("No data for GPS, attempt {}/{}"
                                      .format(count + 1, self.RETRY_TIMES))
@@ -114,7 +114,7 @@ class Device(DeviceSerial):
                                            'AT+CGNSSINFO',
                                            '+CGNSSINFO: ',
                                            self.AT_CMD_TIMEOUT)
-                if b',,,,,,' in gnss_answer:
+                if gnss_answer is not None and b',,,,,,' in gnss_answer:
                     gnss_answer = None
                 time.sleep(self.RETRY_TIME_SEC)
                 count += 1
