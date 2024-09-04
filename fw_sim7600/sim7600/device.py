@@ -91,24 +91,25 @@ class Device(DeviceSerial):
         data = []
         if not self._must_terminate:
             logger.debug('Start GPS session...')
-            self.send_at(s, 'AT', 'OK', self.AT_CMD_TIMEOUT)
             self.send_at(s, 'AT+CGPS=1', 'OK', self.AT_CMD_TIMEOUT)
 
             # gps request
             gps_answer = None
             count = 0
-            while gps_answer is None \
-                    and count < self.RETRY_TIMES \
+            while count < self.RETRY_TIMES \
                     and not self._must_terminate:
                 gps_answer = self.send_at(s,
                                           'AT+CGPSINFO',
                                           '+CGPSINFO: ',
                                           self.AT_CMD_TIMEOUT)
-                if gps_answer is not None:
-                    if gps_answer is not None and b',,,,,,' in gps_answer:
-                        gps_answer = None
-                        logger.debug("No data for GPS, attempt {}/{}"
-                                     .format(count + 1, self.RETRY_TIMES))
+
+                if gps_answer is None or "+CGPSINFO: ,,,,,,,," in str(gps_answer):
+                    gps_answer = None
+                    logger.debug("No data for GPS, attempt {}/{}"
+                                 .format(count + 1, self.RETRY_TIMES))
+                else:
+                    logger.debug("GPS data received")
+                    break
                 time.sleep(self.RETRY_TIME_SEC)
                 count += 1
             if gps_answer is not None:
@@ -117,26 +118,30 @@ class Device(DeviceSerial):
             # gnss request
             gnss_answer = None
             count = 0
-            while gnss_answer is None \
-                    and count < self.RETRY_TIMES \
+            while count < self.RETRY_TIMES \
                     and not self._must_terminate:
                 gnss_answer = self.send_at(s,
                                            'AT+CGNSSINFO',
                                            '+CGNSSINFO: ',
                                            self.AT_CMD_TIMEOUT)
-                if gnss_answer is not None and b',,,,,,' in gnss_answer:
+
+                if gnss_answer is None or "+CGNSSINFO: ,,,,,,,,,,,,,,," in str(gnss_answer):
                     gnss_answer = None
+                    logger.debug("No data for GNSS, attempt {}/{}"
+                                 .format(count + 1, self.RETRY_TIMES))
+                else:
+                    logger.debug("GNSS data received")
+                    break
                 time.sleep(self.RETRY_TIME_SEC)
                 count += 1
             if gnss_answer is not None:
                 data.append(gnss_answer)
 
             logger.debug('End GPS session...')
-            (self.send_at(s,
+            self.send_at(s,
                           'AT+CGPS=0',
                           'OK',
                           self.AT_CMD_TIMEOUT)
-             .decode())
         return data
 
     @staticmethod
@@ -243,8 +248,7 @@ class Device(DeviceSerial):
                         # self._data['CGPSINFO_utc_date'] = values[5]
                         self._data['CGPSINFO_alt'] = values[6]
                         self._data['CGPSINFO_speed'] = values[7]
-                        self._data['CGPSINFO_course'] = values[8] if values[
-                                                                         8] != "" else "-1"
+                        self._data['CGPSINFO_course'] = values[8] if values[8] != "" else "-1"
 
             elif b'+CGNSSINFO:' in frame:
                 # {...}+CGNSSINFO: 2,02,03,00,4629.822936,N,01120.199998,E,051023,194627.0,323.3,0.0,,2.0,1.7,1.0{...}
