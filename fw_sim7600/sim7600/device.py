@@ -48,6 +48,16 @@ class Device(DeviceSerial):
                 self._is_connected = True
 
                 data += self._query_product_info(s)
+
+                if len(data) == 0:
+                    logger.debug("Error querying device, no data received")
+                    self._is_connected = False
+                    return []
+                if not self._find_pid(data):
+                    logger.debug("Error querying device, no PID received")
+                    self._is_connected = False
+                    return []
+
                 data += self._query_gnss_info(s)
                 if self._must_terminate:
                     self._is_connected = False
@@ -282,7 +292,10 @@ class Device(DeviceSerial):
         """
 
         if self.cached_pid is None:
-            self.cached_pid = self._data['AT+CGMM']
+            try:
+                self.cached_pid = self._data['AT+CGMM']
+            except KeyError as err:
+                raise SystemError("Unknown PID from device") from err
 
         return self.cached_pid
 
@@ -337,6 +350,12 @@ class Device(DeviceSerial):
             time.sleep(18)
             logger.debug('SIM7600X is down')
             self._power_state = True
+
+    def _find_pid(self, data):
+        for frame in data:
+            if b'AT+CGMM' in frame:
+                return True
+        return False
 
 
 if __name__ == '__main__':
