@@ -46,7 +46,7 @@ class DeviceAbs:
         signal.signal(signal.SIGTERM, self.__handle_kill_signals)
 
     def __handle_kill_signals(self, signo, _stack_frame):
-        print("Device received `{}` signal. Stop initialization...".format(signo))
+        print("Device received `{}` signal. Shutdown device...".format(signo))
         # SIGINT    2   <= Ctrl+C
         # SIGTERM   15  <= kill PID
         self.terminate()

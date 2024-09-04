@@ -166,11 +166,13 @@ def _init_device(port, speed, wait_connection=True, simulate_dev=False) -> Devic
     elif not dev.is_connected and wait_connection:
         logger.warning("Device not available, retry in {} seconds. Press (Ctrl+C) to exit.".format(CONN_RETRY))
         try:
-            while not dev.is_connected and not dev.must_terminate:
+            while True:
                 time.sleep(CONN_RETRY)
                 dev.refresh()
                 if not dev.is_connected and not dev.must_terminate:
                     logger.debug("Device still not available, retry in {} seconds.".format(CONN_RETRY))
+                else:
+                    break
         except KeyboardInterrupt:
             logger.info("Terminating required by the user.")
             exit(EXIT_INIT_TERMINATED)
@@ -244,9 +246,11 @@ def _main_loop(dev, dbus_obj, development=False):
             dev_global.terminate()
         except Exception as unknown_error:
             logger.error("Unknown error on Main Loop: {}, retry later".format(unknown_error))
-            if development is True:
-                import traceback
-                traceback.print_exc()
+            #if development is True:
+            print("Error traceback:")
+            logger.error("Error traceback:")
+            import traceback
+            traceback.print_exc()
 
         logger.debug("End fetch/pull device")
 
@@ -271,6 +275,10 @@ def _process_property(dev, dbus_obj, property_code, development=False):
     """
 
     property_value_raw = dev.latest_data[property_code]
+    if property_value_raw is None:
+        logger.warning("Property '{}' <raw value: {}> not available, skipped.".format(property_code, property_value_raw))
+        return
+
     try:
         property_name = PROPS_CODES[property_code]['name']
         property_parser = PROPS_CODES[property_code]['parser']
