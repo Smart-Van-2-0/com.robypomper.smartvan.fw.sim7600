@@ -75,6 +75,9 @@ def parse_network_signal_quality_rssi(raw_value: str) -> int:
     191 – - 25 dBm or greater
     199 – not known or not detectable
     100…199 – expand to TDSCDMA, indicate RSCPreceived
+
+    ERRATA:
+    102…190 – - 114... - 26dBm
     """
 
     try:
@@ -82,22 +85,17 @@ def parse_network_signal_quality_rssi(raw_value: str) -> int:
     except Exception:
         raise ValueError("Can't cast '{}' into {}".format(raw_value, "int"))
 
-    if raw_int == 0:
-        return -113
-    elif raw_int == 1:
-        return -111
-    elif 2 <= raw_int <= 30:
-        return -109 + (raw_int * 2)
-    elif raw_int == 31:
-        return -51
+    if 0 <= raw_int <= 31:
+        return -109 + (raw_int * 2) - 4
+    if 32 <= raw_int <= 98:     # EXTRA
+        return -109 + (raw_int * 2) - 4
     elif raw_int == 99:
         return 0
-    elif raw_int == 100:
-        return -116
-    elif raw_int == 101:
-        return -115
-    elif 102 <= raw_int <= 191:
-        return -114 + (raw_int * 0.98)
+
+    elif 100 <= raw_int <= 191:
+        return raw_int - 100 - 116
+    if 192 <= raw_int <= 198:     # EXTRA
+        return raw_int - 100 - 116
     elif raw_int == 199:
         return 0
 
@@ -154,24 +152,36 @@ def calc_network_signal_quality(property_cache) -> float:
     except KeyError as err:
         raise ValueError("Missing required property: {}".format(err))
 
-    RSSI_MIN = -113
-    RSSI_MAX = -51
+    # Default values from SIM7600
+    # RSSI_MIN = -116
+    # RSSI_MAX = -25
+    # BER_MIN = 0
+    # BER_MAX = 10
+
+    # Adjusted constants on 2G/3G and LTE requirements
+    RSSI_MIN = -100
+    RSSI_MAX = -60
     BER_MIN = 0
     BER_MAX = 10
 
-    # rssi Min = -113, Max = -51
-    # ber Min = 0, Max = 10
-    rssi_percent = (rssi - RSSI_MIN) / (RSSI_MAX - RSSI_MIN)
+    if rssi == 0:
+        return -1   # Invalid
+    if rssi <= RSSI_MIN:
+        return 0.0    # No signal
+    if rssi >= RSSI_MAX:
+        rssi = RSSI_MAX
+    rssi_percent = min((rssi - RSSI_MIN) / (RSSI_MAX - RSSI_MIN), 100.0)
+
+    if ber == -1:
+        return round(rssi_percent * 100, 2)
+    if ber <= BER_MIN:
+        return round(rssi_percent * 100, 2)
+    if ber >= BER_MAX:
+        ber = BER_MAX
     ber_percent = (ber - BER_MIN) / (BER_MAX - BER_MIN)
-
-    # Assign weights (e.g., 80% for RSSI and 20% for BER)
-    rssi_weight = 1
-    ber_weight = 0.2
-
-    # Calculate the signal quality as a weighted average
-    signal_quality = (rssi_percent * rssi_weight) - (ber_percent * ber_weight)
-
-    return round(min(signal_quality, 1.0) * 100, 2)
+    ber_weight = -0.2
+    signal_quality = rssi_percent + (ber_percent * ber_weight)
+    return max(0.0, round(signal_quality * 100, 2))
 
 
 
