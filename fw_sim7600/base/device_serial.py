@@ -3,8 +3,8 @@
 import os
 import serial
 
-from fw_sim7600.device import DeviceAbs
-from fw_sim7600.commons import dev_type_to_code
+from fw_sim7600.base.device import DeviceAbs
+from fw_sim7600.base.commons import dev_type_to_code
 
 
 class DeviceSerial(DeviceAbs):
