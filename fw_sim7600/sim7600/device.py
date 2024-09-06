@@ -13,7 +13,7 @@ except:
     _gpio_loaded = False
 
 from fw_sim7600.sim7600.mappings import *
-from fw_sim7600.device_serial import DeviceSerial
+from fw_sim7600.base.device_serial import DeviceSerial
 
 logger = logging.getLogger()
 
@@ -23,6 +23,9 @@ class Device(DeviceSerial):
     Device class for SIM7600 Pack devices communicating via Serial port
     """
 
+    DELIMITER = None
+    FIELD_PID = "AT+CGMM"
+    FIELD_TYPE = None
     RETRY_TIMES = 5
     RETRY_TIME_SEC = 1.0
     RESPONSE_WAIT_TIME = 0.01
@@ -31,7 +34,7 @@ class Device(DeviceSerial):
 
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 115200,
                  auto_refresh=True):
-        super().__init__(device, speed, None, auto_refresh)
+        super().__init__(device, speed, self.DELIMITER, self.FIELD_PID, self.FIELD_TYPE, auto_refresh)
 
         self.cached_pid = None
 
@@ -62,7 +65,8 @@ class Device(DeviceSerial):
                 if self._must_terminate:
                     self._is_connected = False
 
-        except serial.serialutil.SerialException:
+        except serial.serialutil.SerialException as err:
+            logger.warning("Error querying device ({})".format(err))
             self._is_connected = False
 
         return data
@@ -287,21 +291,6 @@ class Device(DeviceSerial):
 
         # for k in self._data.keys():
         #     print("'{}': '{}',".format(k, self._data[k]))
-
-    @property
-    def device_pid(self) -> "str | None":
-        """
-        Returns the device PID, it can be used as index for the PID dict.
-        In the SIM7600 case is the device's model (AT+CGMM).
-        """
-
-        if self.cached_pid is None:
-            try:
-                self.cached_pid = self._data['AT+CGMM']
-            except KeyError as err:
-                raise SystemError("Unknown PID from device") from err
-
-        return self.cached_pid
 
     @property
     def device_type(self) -> str:

@@ -2,8 +2,7 @@
 import logging
 
 from fw_sim7600.sim7600.device import Device
-from fw_sim7600.sim7600.mappings import *
-from fw_sim7600.commons import regenerateValueMaxMin
+from fw_sim7600.base.commons import regenerateValueMaxMin
 
 
 logger = logging.getLogger()
@@ -11,8 +10,8 @@ logger = logging.getLogger()
 
 class DeviceSimulator(Device):
 
-    def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600):
-        super().__init__(device, speed, False)
+    def __init__(self, device, speed):
+        super().__init__(device, speed, auto_refresh=False)
         self._data = {
             'AT+CGMI': 'SIMCOM INCORPORATED',
             'AT+CGMM': 'SIMCOM_SIM7600E-H',

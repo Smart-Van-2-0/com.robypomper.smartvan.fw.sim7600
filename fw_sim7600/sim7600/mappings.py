@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-from fw_sim7600.commons import *
-from fw_sim7600.sim7600._definitions import *
+from fw_sim7600.base.commons import *
 from fw_sim7600.sim7600._dbus_descs import *
 from fw_sim7600.sim7600._parsers import *
+from fw_sim7600.sim7600._calculated import *
 
 # Given an PID, this object returns all his info and meta-data
 # SimCom SIM7600G       https://www.simcom.com/product/SIM7600G-1.html
@@ -22,18 +22,41 @@ from fw_sim7600.sim7600._parsers import *
 SIMCOM_SIM7600_All = {'model': 'SIM7600E-H', 'type': DEV_TYPE_SIM7600,
                           'dbus_iface': DEV_IFACE_SIM7600,
                           'dbus_desc': DEV_DBUS_DESC_SIM7600}
+
 PID = {
-    "SIMCOM_SIM7600G": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600A": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600SA": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600E": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600A-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600V-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600SA-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600JC-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600E-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600NA-H": SIMCOM_SIM7600_All,
-    "SIMCOM_SIM7600G-H": SIMCOM_SIM7600_All,
+    "SIMCOM_SIM7600G": {'model': 'SIM7600G', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600A": {'model': 'SIM7600A', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600SA": {'model': 'SIM7600SA', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600E": {'model': 'SIM7600E', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600A-H": {'model': 'SIM7600A-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600V-H": {'model': 'SIM7600V-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600SA-H": {'model': 'SIM7600SA-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600JC-H": {'model': 'SIM7600JC-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600E-H": {'model': 'SIM7600E-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600NA-H": {'model': 'SIM7600NA-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
+    "SIMCOM_SIM7600G-H": {'model': 'SIM7600G-H', 'type': DEV_TYPE_SIM7600,
+                          'dbus_iface': DEV_IFACE_SIM7600,
+                          'dbus_desc': DEV_DBUS_DESC_SIM7600},
 }
 
 PROPS_CODES = {
@@ -143,17 +166,16 @@ PROPS_CODES = {
 }
 
 CALC_PROPS_CODES = {
-    # N/A
     "network_registration": {"depends_on": "network_status_code",
-                "calculator": calc_network_registration},
+                             "calculator": calc_network_registration},
     "network_searching": {"depends_on": "network_status_code",
-                "calculator": calc_network_searching},
+                          "calculator": calc_network_searching},
     "network_roaming": {"depends_on": "network_status_code",
-                "calculator": calc_network_roaming},
+                        "calculator": calc_network_roaming},
     "network_signal_quality": {"depends_on": ["network_signal_quality_rssi", "network_signal_quality_ber"],
-                "calculator": calc_network_signal_quality},
+                               "calculator": calc_network_signal_quality},
     "network_sim_status": {"depends_on": "network_sim_status_code",
-                "calculator": calc_network_sim_status},
+                            "calculator": calc_network_sim_status},
     "pos_gnss_sat_count": {"depends_on": "pos_gnss_sat_gps_count",
-                "calculator": calc_pos_gnss_sat_count},
+                            "calculator": calc_pos_gnss_sat_count},
 }
