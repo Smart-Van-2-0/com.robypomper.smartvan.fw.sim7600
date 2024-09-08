@@ -110,7 +110,8 @@ class DeviceSerial(DeviceAbs):
                 if self.must_terminate:
                     self._is_connected = False
 
-        except serial.serialutil.SerialException:
+        except serial.serialutil.SerialException as err:
+            logger.warning("Error querying device ({})".format(err))
             self._is_connected = False
 
         return data
