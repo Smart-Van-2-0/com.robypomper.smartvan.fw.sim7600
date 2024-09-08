@@ -136,17 +136,16 @@ class DeviceRunner:
     def _init_device(self, wait_connection=True, simulate_dev=False) -> DeviceAbs:
         """ Init and configure Device. """
 
-        #port = self.settings.get_param_serial_port
-        #speed = self.settings.get_param_serial_speed
+        port = self.settings.get_param_serial_port
+        speed = self.settings.get_param_serial_speed
+        auto_refresh = False
 
         if simulate_dev:
             logger.debug("Simulate device")
-            #return DeviceSimulator(port, speed)
-            return self._init_device_simulator()
+            return self._init_device_simulator(port, speed, auto_refresh)
 
         logger.info("Connecting to {} device...".format(self.fw_name))
-        #dev = Device(port, speed, False)
-        dev = self._init_device_physical()
+        dev = self._init_device_physical(port, speed, auto_refresh)
         logger.debug("Read first data from device...")
         dev.refresh()
 
