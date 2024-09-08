@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
+import logging
 import os
 import serial
 
 from fw_sim7600.base.device import DeviceAbs
 from fw_sim7600.base.commons import dev_type_to_code
+
+logger = logging.getLogger()
 
 
 class DeviceSerial(DeviceAbs):
@@ -12,7 +15,7 @@ class DeviceSerial(DeviceAbs):
     Serial device base classes.
     """
 
-    def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600, pdu_delimiter="$", auto_refresh=True):
+    def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600, pdu_delimiter="$", device_pid_index="PID", device_type_index="Type", auto_refresh=True):
         super().__init__()
 
         self.device = device
@@ -20,6 +23,8 @@ class DeviceSerial(DeviceAbs):
         self.pdu_delimiter_bytes = pdu_delimiter \
             if pdu_delimiter is None or type(pdu_delimiter) == bytes \
             else pdu_delimiter.encode()
+        self._device_pid_index = device_pid_index
+        self._device_type_index = device_type_index
         self._data = {}
 
         self._is_connected = False
@@ -93,6 +98,15 @@ class DeviceSerial(DeviceAbs):
                     frame = s.readline()
                     data.append(frame)
 
+                if len(data) == 0:
+                    logger.debug("Error querying device, no data received")
+                    self._is_connected = False
+                    return []
+                if not self._find_pid(data):
+                    logger.debug("Error querying device, no PID received")
+                    self._is_connected = False
+                    return []
+
                 if self.must_terminate:
                     self._is_connected = False
 
@@ -110,6 +124,44 @@ class DeviceSerial(DeviceAbs):
     def conn_speed(self) -> int:
         """ Returns the speed used to communicate with the serial device """
         return self.speed
+
+    @property
+    def device_pid(self) -> "str | None":
+        """
+        Returns the device PID, it can be used as index for the PID dict.
+        In the SIM7600 case is the device's model (AT+CGMM).
+        """
+
+        if self.cached_pid is None:
+            try:
+                self.cached_pid = self._data[self._device_pid_index]
+            except KeyError as err:
+                logger.debug("Field '{}' not found on read data".format(self._device_pid_index))
+                raise SystemError("Unknown PID from device") from err
+
+        return self.cached_pid
+
+    def _find_pid(self, data):
+        for frame in data:
+            if self._device_pid_index.encode() in frame:
+                return True
+        return False
+
+    @property
+    def device_type(self) -> "str | None":
+        """
+        Returns the device PID, it can be used as index for the PID dict.
+        In the SIM7600 case is the device's model (AT+CGMM).
+        """
+
+        if self.cached_type is None:
+            try:
+                self.cached_type = self._data[self._device_type_index]
+            except KeyError as err:
+                logger.debug("Field '{}' not found on read data".format(self._device_type_index))
+                raise SystemError("Unknown Type from device") from err
+
+        return self.cached_type
 
     @property
     def device_type_code(self) -> str:
