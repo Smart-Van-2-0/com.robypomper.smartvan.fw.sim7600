@@ -2,8 +2,7 @@
 import logging
 
 from fw_sim7600.sim7600.device import Device
-from fw_sim7600.sim7600.mappings import *
-from fw_sim7600.commons import regenerateValueMaxMin
+from fw_sim7600.base.commons import regenerateValueMaxMin
 
 
 logger = logging.getLogger()
@@ -11,8 +10,8 @@ logger = logging.getLogger()
 
 class DeviceSimulator(Device):
 
-    def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 9600):
-        super().__init__(device, speed, False)
+    def __init__(self, device, speed):
+        super().__init__(device, speed, auto_refresh=False)
         self._data = {
             'AT+CGMI': 'SIMCOM INCORPORATED',
             'AT+CGMM': 'SIMCOM_SIM7600E-H',
@@ -20,8 +19,11 @@ class DeviceSimulator(Device):
             'AT+CSUB': 'B04V03',
             'AT+CSUB_B': 'MDM9x07_LE20_S_22_V1.03_210527',
             'AT+CGMR': 'LE20B04SIM7600M22',
-            'AT+CSQ_rssi': '2',
-            'AT+CSQ_ber': '50',
+            'AT+CSQ_rssi': '6',
+            'AT+CSQ_ber': '7',
+            'AT+CPIN': '+CPIN: READY',
+            'AT+COPS': '+COPS: 0,0,"China Mobile Com",0',
+            'AT+CREG': '+CREG: 0, 0',
             'CGPSINFO_lat_degrees': '4629.837756',
             'CGPSINFO_lat_dir': 'N',
             'CGPSINFO_log_degrees': '01120.203911',
@@ -43,9 +45,9 @@ class DeviceSimulator(Device):
             'CGNSSINFO_pdop': '1.3',
             'CGNSSINFO_hdop': '1.0',
             'CGNSSINFO_vdop': '0.8',
-            'AT+CPIN': 'NoSIM',
             'power_module_state': str(self._power_state),
         }
+        self._is_connected = True
 
     def refresh(self, reset_data=False) -> bool:
         if not self._power_state:
@@ -58,30 +60,32 @@ class DeviceSimulator(Device):
             'AT+CSUB': 'B04V03',
             'AT+CSUB_B': 'MDM9x07_LE20_S_22_V1.03_210527',
             'AT+CGMR': 'LE20B04SIM7600M22',
-            'AT+CSQ_rssi': regenerateValueMaxMin(self._data['AT+CSQ_rssi'], 1, 0, 199),
-            'AT+CSQ_ber': regenerateValueMaxMin(self._data['AT+CSQ_ber'], 1, 0, 99),
+            'AT+CSQ_rssi': str(int(regenerateValueMaxMin(self._data['AT+CSQ_rssi'], 1, 0, 31))),
+            'AT+CSQ_ber': str(int(regenerateValueMaxMin(self._data['AT+CSQ_ber'], 1, 0, 7))),
+            'AT+CPIN': '+CPIN: READY',
+            'AT+COPS': '+COPS: 0,0,"China Mobile Com",0',
+            'AT+CREG': '+CREG: 0, 0',
             'CGPSINFO_lat_degrees': regenerateValueMaxMin(self._data['CGPSINFO_lat_degrees'], 0.01, 0, 9000),
             'CGPSINFO_lat_dir': 'N',    # 'S' or "N" if random.randint(0, 1) else "N",
-            'CGPSINFO_log_degrees': regenerateValueMaxMin(self._data['CGPSINFO_log_degrees'], 0.01, 0, 18000),
+            'CGPSINFO_log_degrees': str(regenerateValueMaxMin(self._data['CGPSINFO_log_degrees'], 0.01, 0, 18000)),
             'CGPSINFO_log_dir': 'E',    # 'W' or "E" if random.randint(0, 1) else "W",
-            'CGPSINFO_alt': regenerateValueMaxMin(self._data['CGPSINFO_alt'], 0.1, 0, 500),
-            'CGPSINFO_speed': regenerateValueMaxMin(self._data['CGPSINFO_speed'], 0.1, 0, 20),
-            'CGPSINFO_course': regenerateValueMaxMin(self._data['CGPSINFO_course'], 0.1, 0, 360),
+            'CGPSINFO_alt': str(regenerateValueMaxMin(self._data['CGPSINFO_alt'], 0.1, 0, 500)),
+            'CGPSINFO_speed': str(regenerateValueMaxMin(self._data['CGPSINFO_speed'], 0.1, 0, 20)),
+            'CGPSINFO_course': str(regenerateValueMaxMin(self._data['CGPSINFO_course'], 0.1, 0, 360)),
             'CGNSSINFO_mode': '2',      # '3' or "2" if random.randint(0, 1) else "3",
-            'CGNSSINFO_sat_gps_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_gps_count'], 1, 0, 12),
-            'CGNSSINFO_sat_glonass_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_glonass_count'], 1, 0, 12),
-            'CGNSSINFO_sat_beidou_count': regenerateValueMaxMin(self._data['CGNSSINFO_sat_beidou_count'], 1, 0, 12),
-            'CGNSSINFO_lat_degrees': regenerateValueMaxMin(self._data['CGNSSINFO_lat_degrees'], 0.01, 0, 9000),
+            'CGNSSINFO_sat_gps_count': str(int(regenerateValueMaxMin(self._data['CGNSSINFO_sat_gps_count'], 1, 0, 12))),
+            'CGNSSINFO_sat_glonass_count': str(int(regenerateValueMaxMin(self._data['CGNSSINFO_sat_glonass_count'], 1, 0, 12))),
+            'CGNSSINFO_sat_beidou_count': str(int(regenerateValueMaxMin(self._data['CGNSSINFO_sat_beidou_count'], 1, 0, 12))),
+            'CGNSSINFO_lat_degrees': str(regenerateValueMaxMin(self._data['CGNSSINFO_lat_degrees'], 0.01, 0, 9000)),
             'CGNSSINFO_lat_dir': 'N',   # 'S' or "N" if random.randint(0, 1) else "N",
-            'CGNSSINFO_log_degrees': regenerateValueMaxMin(self._data['CGNSSINFO_log_degrees'], 0.01, 0, 18000),
+            'CGNSSINFO_log_degrees': str(regenerateValueMaxMin(self._data['CGNSSINFO_log_degrees'], 0.01, 0, 18000)),
             'CGNSSINFO_log_dir': 'E',   # 'W' or "E" if random.randint(0, 1) else "W",
-            'CGNSSINFO_alt': regenerateValueMaxMin(self._data['CGNSSINFO_alt'], 0.1, 0, 500),
-            'CGNSSINFO_speed': regenerateValueMaxMin(self._data['CGNSSINFO_speed'], 0.1, 0, 20),
-            'CGNSSINFO_course': regenerateValueMaxMin(self._data['CGNSSINFO_course'], 0.1, 0, 360),
-            'CGNSSINFO_pdop': regenerateValueMaxMin(self._data['CGNSSINFO_pdop'], 0.1, 0, 4),
-            'CGNSSINFO_hdop': regenerateValueMaxMin(self._data['CGNSSINFO_hdop'], 0.1, 0, 4),
-            'CGNSSINFO_vdop': regenerateValueMaxMin(self._data['CGNSSINFO_vdop'], 0.1, 0, 4),
-            'AT+CPIN': 'NoSIM',
+            'CGNSSINFO_alt': str(regenerateValueMaxMin(self._data['CGNSSINFO_alt'], 0.1, 0, 500)),
+            'CGNSSINFO_speed': str(regenerateValueMaxMin(self._data['CGNSSINFO_speed'], 0.1, 0, 20)),
+            'CGNSSINFO_course': str(regenerateValueMaxMin(self._data['CGNSSINFO_course'], 0.1, 0, 360)),
+            'CGNSSINFO_pdop': str(regenerateValueMaxMin(self._data['CGNSSINFO_pdop'], 0.1, 0, 4)),
+            'CGNSSINFO_hdop': str(regenerateValueMaxMin(self._data['CGNSSINFO_hdop'], 0.1, 0, 4)),
+            'CGNSSINFO_vdop': str(regenerateValueMaxMin(self._data['CGNSSINFO_vdop'], 0.1, 0, 4)),
             'power_module_state': str(self._power_state),
         }
         return True

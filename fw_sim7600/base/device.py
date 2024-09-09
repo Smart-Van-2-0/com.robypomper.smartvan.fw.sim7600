@@ -1,11 +1,17 @@
 #!/usr/bin/python3
 
+import signal
+
 
 # noinspection PyPropertyDefinition
 class DeviceAbs:
     """
     Device base classes.
     """
+
+    def __init__(self):
+        self._must_terminate = False
+        self._register_kill_signals()
 
     def refresh(self, reset_data=False):
         """
@@ -28,7 +34,22 @@ class DeviceAbs:
         """
         Send the terminate signal to all device process and loops.
         """
-        raise NotImplementedError()
+        self._must_terminate = True
+
+    @property
+    def must_terminate(self) -> bool:
+        """ Returns True if the device must terminate the current operation and disconnect """
+        return self._must_terminate
+
+    def _register_kill_signals(self):
+        signal.signal(signal.SIGINT, self.__handle_kill_signals)
+        signal.signal(signal.SIGTERM, self.__handle_kill_signals)
+
+    def __handle_kill_signals(self, signo, _stack_frame):
+        print("Device received `{}` signal. Shutdown device...".format(signo))
+        # SIGINT    2   <= Ctrl+C
+        # SIGTERM   15  <= kill PID
+        self.terminate()
 
     @property
     def device_pid(self) -> "str | None":

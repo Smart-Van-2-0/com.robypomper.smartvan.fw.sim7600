@@ -13,7 +13,7 @@ except:
     _gpio_loaded = False
 
 from fw_sim7600.sim7600.mappings import *
-from fw_sim7600.device_serial import DeviceSerial
+from fw_sim7600.base.device_serial import DeviceSerial
 
 logger = logging.getLogger()
 
@@ -23,6 +23,9 @@ class Device(DeviceSerial):
     Device class for SIM7600 Pack devices communicating via Serial port
     """
 
+    DELIMITER = None
+    FIELD_PID = "AT+CGMM"
+    FIELD_TYPE = None
     RETRY_TIMES = 5
     RETRY_TIME_SEC = 1.0
     RESPONSE_WAIT_TIME = 0.01
@@ -31,7 +34,7 @@ class Device(DeviceSerial):
 
     def __init__(self, device: str = '/dev/ttyAMA0', speed: int = 115200,
                  auto_refresh=True):
-        super().__init__(device, speed, None, auto_refresh)
+        super().__init__(device, speed, self.DELIMITER, self.FIELD_PID, self.FIELD_TYPE, auto_refresh)
 
         self.cached_pid = None
 
@@ -48,11 +51,22 @@ class Device(DeviceSerial):
                 self._is_connected = True
 
                 data += self._query_product_info(s)
+
+                if len(data) == 0:
+                    logger.debug("Error querying device, no data received")
+                    self._is_connected = False
+                    return []
+                if not self._find_pid(data):
+                    logger.debug("Error querying device, no PID received")
+                    self._is_connected = False
+                    return []
+
                 data += self._query_gnss_info(s)
                 if self._must_terminate:
                     self._is_connected = False
 
-        except serial.serialutil.SerialException:
+        except serial.serialutil.SerialException as err:
+            logger.warning("Error querying device ({})".format(err))
             self._is_connected = False
 
         return data
@@ -67,7 +81,9 @@ class Device(DeviceSerial):
             data.append(self.send_at(s, 'AT+CSUB', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CGMR', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CSQ', 'OK', self.AT_CMD_TIMEOUT))
+            data.append(self.send_at(s, 'AT+CREG?', 'OK', self.AT_CMD_TIMEOUT))
             data.append(self.send_at(s, 'AT+CPIN?', 'OK', self.AT_CMD_TIMEOUT))
+            data.append(self.send_at(s, 'AT+COPS?', 'OK', self.AT_CMD_TIMEOUT))
             res = []
             for val in data:
                 if val is not None:
@@ -79,24 +95,25 @@ class Device(DeviceSerial):
         data = []
         if not self._must_terminate:
             logger.debug('Start GPS session...')
-            self.send_at(s, 'AT', 'OK', self.AT_CMD_TIMEOUT)
             self.send_at(s, 'AT+CGPS=1', 'OK', self.AT_CMD_TIMEOUT)
 
             # gps request
             gps_answer = None
             count = 0
-            while gps_answer is None \
-                    and count < self.RETRY_TIMES \
+            while count < self.RETRY_TIMES \
                     and not self._must_terminate:
                 gps_answer = self.send_at(s,
                                           'AT+CGPSINFO',
                                           '+CGPSINFO: ',
                                           self.AT_CMD_TIMEOUT)
-                if gps_answer is not None:
-                    if b',,,,,,' in gps_answer:
-                        gps_answer = None
-                        logger.debug("No data for GPS, attempt {}/{}"
-                                     .format(count + 1, self.RETRY_TIMES))
+
+                if gps_answer is None or "+CGPSINFO: ,,,,,,,," in str(gps_answer):
+                    gps_answer = None
+                    logger.debug("No data for GPS, attempt {}/{}"
+                                 .format(count + 1, self.RETRY_TIMES))
+                else:
+                    logger.debug("GPS data received")
+                    break
                 time.sleep(self.RETRY_TIME_SEC)
                 count += 1
             if gps_answer is not None:
@@ -105,26 +122,30 @@ class Device(DeviceSerial):
             # gnss request
             gnss_answer = None
             count = 0
-            while gnss_answer is None \
-                    and count < self.RETRY_TIMES \
+            while count < self.RETRY_TIMES \
                     and not self._must_terminate:
                 gnss_answer = self.send_at(s,
                                            'AT+CGNSSINFO',
                                            '+CGNSSINFO: ',
                                            self.AT_CMD_TIMEOUT)
-                if b',,,,,,' in gnss_answer:
+
+                if gnss_answer is None or "+CGNSSINFO: ,,,,,,,,,,,,,,," in str(gnss_answer):
                     gnss_answer = None
+                    logger.debug("No data for GNSS, attempt {}/{}"
+                                 .format(count + 1, self.RETRY_TIMES))
+                else:
+                    logger.debug("GNSS data received")
+                    break
                 time.sleep(self.RETRY_TIME_SEC)
                 count += 1
             if gnss_answer is not None:
                 data.append(gnss_answer)
 
             logger.debug('End GPS session...')
-            (self.send_at(s,
+            self.send_at(s,
                           'AT+CGPS=0',
                           'OK',
                           self.AT_CMD_TIMEOUT)
-             .decode())
         return data
 
     @staticmethod
@@ -199,11 +220,21 @@ class Device(DeviceSerial):
                 self._data['AT+CSQ_rssi'] = values[0]
                 self._data['AT+CSQ_ber'] = values[1]
 
+            elif b'AT+CREG' in frame:
+                # AT+CREG...
+                frame_lines = frame.decode().split("\r\n")
+                self._data['AT+CREG'] = frame_lines[1]
+
             elif b'AT+CPIN' in frame:
                 # AT+CPIN...
                 frame_lines = frame.decode().split("\r\n")
                 self._data['AT+CPIN'] = frame_lines[1]
                 at_cpin_set = True
+
+            elif b'AT+COPS' in frame:
+                # AT+COPS...
+                frame_lines = frame.decode().split("\r\n")
+                self._data['AT+COPS'] = frame_lines[1]
 
             elif b'+CGPSINFO:' in frame:
                 # {...}+CGPSINFO: 4629.830411,N,01120.202419,E,051023,185112.0,290.5,0.0,{...}
@@ -221,8 +252,7 @@ class Device(DeviceSerial):
                         # self._data['CGPSINFO_utc_date'] = values[5]
                         self._data['CGPSINFO_alt'] = values[6]
                         self._data['CGPSINFO_speed'] = values[7]
-                        self._data['CGPSINFO_course'] = values[8] if values[
-                                                                         8] != "" else "-1"
+                        self._data['CGPSINFO_course'] = values[8] if values[8] != "" else "-1"
 
             elif b'+CGNSSINFO:' in frame:
                 # {...}+CGNSSINFO: 2,02,03,00,4629.822936,N,01120.199998,E,051023,194627.0,323.3,0.0,,2.0,1.7,1.0{...}
@@ -263,23 +293,14 @@ class Device(DeviceSerial):
         #     print("'{}': '{}',".format(k, self._data[k]))
 
     @property
-    def device_pid(self) -> "str | None":
-        """
-        Returns the device PID, it can be used as index for the PID dict.
-        In the SIM7600 case is the device's model (AT+CGMM).
-        """
-
-        if self.cached_pid is None:
-            self.cached_pid = self._data['AT+CGMM']
-
-        return self.cached_pid
-
-    @property
     def device_type(self) -> str:
         """ Returns the device type """
         if self.cached_type is None:
             if self.device_pid is not None:
-                self.cached_type = PID[self.device_pid]['type']
+                try:
+                    self.cached_type = PID[self.device_pid]['type']
+                except KeyError as err:
+                    raise SystemError("Unknown PID '{}' read from device".format(self.device_pid)) from err
 
         return self.cached_type \
             if self.cached_type is not None \
@@ -322,6 +343,12 @@ class Device(DeviceSerial):
             time.sleep(18)
             logger.debug('SIM7600X is down')
             self._power_state = True
+
+    def _find_pid(self, data):
+        for frame in data:
+            if b'AT+CGMM' in frame:
+                return True
+        return False
 
 
 if __name__ == '__main__':

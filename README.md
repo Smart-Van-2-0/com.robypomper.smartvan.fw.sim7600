@@ -8,15 +8,14 @@ the [Smart Van Project](https://smartvan.johnosproject.org/).
 
 **FW Name:** FW SIM7600<br />
 **FW Group:** com.robypomper.smartvan.fw.sim7600<br />
-**FW Version:** 1.0.0
+**FW Version:** 1.0.1
 
 [README](README.md) | [CHANGELOG](CHANGELOG.md) | [TODOs](TODOs.md) | [LICENCE](LICENCE.md)
 
-Once ran, this script **reads data from the serial specified port then notify
-the DBus with updated values**. The DBus service and his properties depends on
-the model get from the device (using the `AT+CGMM` command). More info 
-on [Supported devices](/docs/supported_devices.md)
-and [value mapping](/docs/values_mapping.md).
+Once ran, this script **sends AT commands and reads their responses using the
+serial specified port then notify the DBus with updated values**. The DBus
+service and his properties depends on the model get from the device (using the
+`AT+CGMM` command). More info on [Supported devices](/docs/supported_devices.md) and [value mapping](/docs/values_mapping.md).
 
 ## Run
 
@@ -99,32 +98,32 @@ Module's files can be grouped in 2 categories:
 
 **Definitions:**
 
-* [ups/mappings.py](/fw_upspack_v3/ups/mappings.py):
+* [sim7600/mappings.py](/fw_sim7600/sim7600/mappings.py):
   definition of `PID`, `PROPS_CODES` and `CALC_PROPS_CODES` tables
-* [ups/_definitions.py](/fw_upspack_v3/ups/_definitions.py):
+* [sim7600/_definitions.py](/fw_sim7600/sim7600/_definitions.py):
   definitions of supported devices, DUbus ifaces and custom properties types
-* [ups/_parsers.py](/fw_upspack_v3/ups/_parsers.py):
+* [sim7600/_parsers.py](/fw_sim7600/sim7600/_parsers.py):
   custom properties parsers
-* [ups/_calculated.py](/fw_upspack_v3/ups/_calculated.py):
+* [sim7600/_calculated.py](/fw_sim7600/sim7600/_calculated.py):
   custom properties calculators and data generator methods for simulator
-* [ups/_dbus_descs.py](/fw_upspack_v3/ups/_dbus_descs.py):
+* [sim7600/_dbus_descs.py](/fw_sim7600/sim7600/_dbus_descs.py):
   definition of DBus iface's descriptors
 
 **Operations:**
 
 * [run.py](run.py):
   main firmware script
-* [ups/device.py](/fw_upspack_v3/ups/device.py):
+* [sim7600/device.py](/fw_sim7600/sim7600/device.py):
   class that represent the device
-* [ups/simulator.py](/fw_upspack_v3/ups/simulator.py):
+* [sim7600/simulator.py](/fw_sim7600/sim7600/simulator.py):
   class that represent the simulated device
-* [dbus/obj.py](/fw_upspack_v3/dbus/obj.py):
+* [dbus/obj.py](/fw_sim7600/dbus/obj.py):
   class that represent aDBus object to publish
-* [dbus/daemon.py](/fw_upspack_v3/dbus/daemon.py):
+* [dbus/daemon.py](/fw_sim7600/dbus/daemon.py):
   methods to handle the DBus daemon
-* [commons.py](/fw_upspack_v3/commons.py):
+* [base/commons.py](/fw_sim7600/base/commons.py):
   commons properties parsers and simulator methods
-* [device.py](/fw_upspack_v3/device.py):
+* [base/device.py](/fw_sim7600/base/device.py):
   base class for devices
-* [device_serial.py](/fw_upspack_v3/device_serial.py):
+* [base/device_serial.py](/fw_sim7600/base/device_serial.py):
   base implementation for serial devices
