@@ -31,39 +31,41 @@ For each property are defined following fields:
 * `desc`: human-readable description of the property
 * `parser`: the method to use to parse the value read from the device
 
-| Prop.'s KEY                   | Prop.'s Name on DBus          | Description                                                   | Parser method        |
-|-------------------------------|-------------------------------|---------------------------------------------------------------|----------------------|
-| `AT+CGMI`                     | `manufacturer`                | Product's manufacturer                                        | `props_parser_str`   |
-| `AT+CGMM`                     | `model`                       | Product's model                                               | `props_parser_str`   |
-| `AT+CGSN`                     | `serial_number`               | Product's serial number                                       | `props_parser_str`   |
-| `AT+CSUB`                     | `version_module`              | Product's module version                                      | `props_parser_str`   |
-| `AT+CSUB_B`                   | `version_chip`                | Product's chip version                                        | `props_parser_str`   |
-| `AT+CGMR`                     | `version_firmware`            | Product's firmware version                                    | `props_parser_str`   |
-| `AT+CSQ_rssi`                 | `network_signal_quality_rssi` | Cellular network quality as signal strength indication <rssi> | `props_parser_int`   |
-| `AT+CSQ_ber`                  | `network_signal_quality_ber`  | Cellular network quality as .channel bit error rate <ber>     | `props_parser_int`   |
-| `AT+CPIN`                     | `network_sim_status`          | SIM status                                                    | `props_parser_str`   |
-| `CGPSINFO_lat_dir`            | `pos_gps_lat_dir`             | GPS latitude (N/S)"                                           | `props_parser_str`   |
-| `CGPSINFO_lat_degrees`        | `pos_gps_lat_degrees`         | GPS latitude degrees                                          | `props_parser_float` |
-| `CGPSINFO_log_dir`            | `pos_gps_log_dir`             | GPS longitude (E/W)                                           | `props_parser_str`   |
-| `CGPSINFO_log_degrees`        | `pos_gps_log_degrees`         | GPS longitude degrees                                         | `props_parser_float` |
-| `CGPSINFO_alt`                | `pos_gps_alt`                 | GPS position MSL Altitude. Unit is meters.                    | `props_parser_float` |
-| `CGPSINFO_speed`              | `pos_gps_speed`               | GPS position Speed Over Ground. Unit is knots.                | `props_parser_float` |
-| `CGPSINFO_course`             | `pos_gps_course`              | GPS position course in degrees                                | `props_parser_float` |
-| `CGNSSINFO_lat_dir`           | `pos_gnss_lat_dir`            | GNSS latitude (N/S)                                           | `props_parser_str`   |
-| `CGNSSINFO_lat_degrees`       | `pos_gnss_lat_degrees`        | GNSS latitude degrees                                         | `props_parser_float` |
-| `CGNSSINFO_log_dir`           | `pos_gnss_log_dir`            | GNSS longitude (E/W)                                          | `props_parser_str`   |
-| `CGNSSINFO_log_degrees`       | `pos_gnss_log_degrees`        | GNSS longitude degrees                                        | `props_parser_float` |
-| `CGNSSINFO_alt`               | `pos_gnss_alt`                | GNSS position MSL Altitude. Unit is meters.                   | `props_parser_float` |
-| `CGNSSINFO_speed`             | `pos_gnss_speed`              | GNSS position Speed Over Ground. Unit is knots.               | `props_parser_float` |
-| `CGNSSINFO_course`            | `pos_gnss_course`             | GNSS position course in degrees.                              | `props_parser_float` |
-| `CGNSSINFO_pdop`              | `pos_gnss_pdop`               | Position Dilution Of Precision.                               | `props_parser_float` |
-| `CGNSSINFO_hdop`              | `pos_gnss_hdop`               | Horizontal Dilution Of Precision.                             | `props_parser_float` |
-| `CGNSSINFO_vdop`              | `pos_gnss_vdop`               | Vertical Dilution Of Precision.                               | `props_parser_float` |
-| `CGNSSINFO_mode`              | `pos_gnss_mode`               | Fix mode 2=2D fix 3=3D fix                                    | `props_parser_int`   |
-| `CGNSSINFO_sat_gps_count`     | `pos_gnss_sat_gps_count`      | GPS satellite valid numbers scope: 00-12                      | `props_parser_int`   |
-| `CGNSSINFO_sat_glonass_count` | `pos_gnss_sat_glonass_count`  | GLONASS satellite valid numbers scope: 00-12                  | `props_parser_int`   |
-| `CGNSSINFO_sat_beidou_count`  | `pos_gnss_sat_beidou_count`   | BEIDOU satellite valid numbers scope: 00-12                   | `props_parser_int`   |
-| `power_module_state`          | `power_module_state`          | State of the module: true is power on, otherwise is power off | `props_parser_bool`  |
+| Prop.'s KEY                   | Prop.'s Name on DBus          | Description                                                   | Parser method                      |
+|-------------------------------|-------------------------------|---------------------------------------------------------------|------------------------------------|
+| `AT+CGMI`                     | `manufacturer`                | Product's manufacturer                                        | `props_parser_str`                 |
+| `AT+CGMM`                     | `model`                       | Product's model                                               | `props_parser_str`                 |
+| `AT+CGSN`                     | `serial_number`               | Product's serial number                                       | `props_parser_str`                 |
+| `AT+CSUB`                     | `version_module`              | Product's module version                                      | `props_parser_str`                 |
+| `AT+CSUB_B`                   | `version_chip`                | Product's chip version                                        | `props_parser_str`                 |
+| `AT+CGMR`                     | `version_firmware`            | Product's firmware version                                    | `props_parser_str`                 |
+| `AT+CSQ_rssi`                 | `network_signal_quality_rssi` | Cellular network quality as signal strength indication <rssi> | `parse_network_signal_quality_rssi`                 |
+| `AT+CSQ_ber`                  | `network_signal_quality_ber`  | Cellular network quality as .channel bit error rate <ber>     | `parse_network_signal_quality_ber`                 |
+| `AT+CPIN`                     | `network_sim_status`          | SIM status                                                    | `props_parser_sim_status_code`                 |
+| `AT+COPS`                     | `network_sim_provider`        | Info about the SIM provider (network operator)                | `network_sim_provider`                 |
+| `AT+CREG`                     | `network_status_code`         | Network status code                                           | `props_parser_network_status_code` |
+| `CGPSINFO_lat_dir`            | `pos_gps_lat_dir`             | GPS latitude (N/S)"                                           | `props_parser_gpsinfo_coordinates`                 |
+| `CGPSINFO_lat_degrees`        | `pos_gps_lat_degrees`         | GPS latitude degrees                                          | `props_parser_lon`               |
+| `CGPSINFO_log_dir`            | `pos_gps_log_dir`             | GPS longitude (E/W)                                           | `props_parser_gpsinfo_coordinates`                 |
+| `CGPSINFO_log_degrees`        | `pos_gps_log_degrees`         | GPS longitude degrees                                         | `props_parser_float`               |
+| `CGPSINFO_alt`                | `pos_gps_alt`                 | GPS position MSL Altitude. Unit is meters.                    | `props_parser_float`               |
+| `CGPSINFO_speed`              | `pos_gps_speed`               | GPS position Speed Over Ground. Unit is knots.                | `props_parser_float`               |
+| `CGPSINFO_course`             | `pos_gps_course`              | GPS position course in degrees                                | `props_parser_float`               |
+| `CGNSSINFO_lat_dir`           | `pos_gnss_lat_dir`            | GNSS latitude (N/S)                                           | `props_parser_lat`                 |
+| `CGNSSINFO_lat_degrees`       | `pos_gnss_lat_degrees`        | GNSS latitude degrees                                         | `props_parser_gpsinfo_coordinates`               |
+| `CGNSSINFO_log_dir`           | `pos_gnss_log_dir`            | GNSS longitude (E/W)                                          | `props_parser_lon`                 |
+| `CGNSSINFO_log_degrees`       | `pos_gnss_log_degrees`        | GNSS longitude degrees                                        | `props_parser_gpsinfo_coordinates`               |
+| `CGNSSINFO_alt`               | `pos_gnss_alt`                | GNSS position MSL Altitude. Unit is meters.                   | `props_parser_float`               |
+| `CGNSSINFO_speed`             | `pos_gnss_speed`              | GNSS position Speed Over Ground. Unit is knots.               | `props_parser_float`               |
+| `CGNSSINFO_course`            | `pos_gnss_course`             | GNSS position course in degrees.                              | `props_parser_float`               |
+| `CGNSSINFO_pdop`              | `pos_gnss_pdop`               | Position Dilution Of Precision.                               | `props_parser_float`               |
+| `CGNSSINFO_hdop`              | `pos_gnss_hdop`               | Horizontal Dilution Of Precision.                             | `props_parser_float`               |
+| `CGNSSINFO_vdop`              | `pos_gnss_vdop`               | Vertical Dilution Of Precision.                               | `props_parser_float`               |
+| `CGNSSINFO_mode`              | `pos_gnss_mode`               | Fix mode 2=2D fix 3=3D fix                                    | `props_parser_int`                 |
+| `CGNSSINFO_sat_gps_count`     | `pos_gnss_sat_gps_count`      | GPS satellite valid numbers scope: 00-12                      | `props_parser_int`                 |
+| `CGNSSINFO_sat_glonass_count` | `pos_gnss_sat_glonass_count`  | GLONASS satellite valid numbers scope: 00-12                  | `props_parser_int`                 |
+| `CGNSSINFO_sat_beidou_count`  | `pos_gnss_sat_beidou_count`   | BEIDOU satellite valid numbers scope: 00-12                   | `props_parser_int`                 |
+| `power_module_state`          | `power_module_state`          | State of the module: true is power on, otherwise is power off | `props_parser_bool`                |
 
 Parser methods are defined into [_parsers.py](/fw_sim7600/sim7600/_parsers.py)
 file. Depending on which DBus property's they are mapped for, they can return
@@ -86,9 +88,14 @@ For each calculated property are defined following fields:
 * `depends_on`: the list of properties on which the current property depends
 * `calculator`: the method to use to elaborate the property
 
-| Prop.'s Name on DBus | Description | Depends on | Calculator method |
-|----------------------|-------------|------------|-------------------|
-| --                   | --          | --         | --                |
+| Prop.'s Name on DBus     | Description                                                                 | Depends on                                                  | Calculator method             |
+|--------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|-------------------------------|
+| `network_registration`   | Status of the network (Registered -> True, NOT Registered -> False)         | `network_status_code`                                       | `calc_network_registration`   |
+| `network_searching`      | Status of the network searching (Searching -> True, NOT Searching -> False) | `network_status_code`                                       | `calc_network_searching`      |
+| `network_roaming`        | Status of the network roaming (Roaming -> True, NOT Roaming -> False)       | `network_status_code`                                       | `calc_network_roaming`        |
+| `network_signal_quality` | Cellular network quality as signal strength indication in percentage        | `network_signal_quality_rssi`, `network_signal_quality_ber` | `calc_network_signal_quality` |
+| `network_sim_status`     | SIM status (Ready -> True, NOT Ready -> False)                              | `network_sim_status`                                        | `calc_network_sim_status`     |
+| `pos_gnss_sat_count`     | Total number of GNSS satellites in view                                     | `pos_gnss_sat_gps_count`                                    | `calc_pos_gnss_sat_count`     |
 
 **No calculated properties are used from this script. **
 
@@ -111,17 +118,24 @@ property, the table define if it will be exported by the column's device type.
 | `version_firmware`            | string | Yes     |
 | `network_signal_quality_rssi` | int    | Yes     |
 | `network_signal_quality_ber`  | int    | Yes     |
-| `network_sim_status`          | string | Yes     |
-| `pos_gps_lat_dir`             | string | Yes     |
+| `network_signal_quality`      | double | Yes     |
+| `network_registration`        | bool   | Yes     |
+| `network_searching`           | bool   | Yes     |
+| `network_roaming`             | bool   | Yes     |
+| `network_status_code`         | int    | Yes     |
+| `network_sim_status`          | bool   | Yes     |
+| `network_sim_status_code`     | int    | Yes     |
+| `network_sim_provider`        | string | Yes     |
+| `pos_gps_lat_dir`             | bool   | Yes     |
 | `pos_gps_lat_degrees`         | double | Yes     |
-| `pos_gps_log_dir`             | string | Yes     |
+| `pos_gps_log_dir`             | bool   | Yes     |
 | `pos_gps_log_degrees`         | double | Yes     |
 | `pos_gps_alt`                 | double | Yes     |
 | `pos_gps_speed`               | double | Yes     |
 | `pos_gps_course`              | double | Yes     |
-| `pos_gnss_lat_dir`            | string | Yes     |
+| `pos_gnss_lat_dir`            | bool   | Yes     |
 | `pos_gnss_lat_degrees`        | double | Yes     |
-| `pos_gnss_log_dir`            | string | Yes     |
+| `pos_gnss_log_dir`            | bool   | Yes     |
 | `pos_gnss_log_degrees`        | double | Yes     |
 | `pos_gnss_alt`                | double | Yes     |
 | `pos_gnss_speed`              | double | Yes     |
@@ -130,6 +144,7 @@ property, the table define if it will be exported by the column's device type.
 | `pos_gnss_hdop`               | double | Yes     |
 | `pos_gnss_vdop`               | double | Yes     |
 | `pos_gnss_mode`               | int    | Yes     |
+| `pos_gnss_sat_count`          | int    | Yes     |
 | `pos_gnss_sat_gps_count`      | int    | Yes     |
 | `pos_gnss_sat_glonass_count`  | int    | Yes     |
 | `pos_gnss_sat_beidou_count`   | int    | Yes     |

@@ -1,5 +1,7 @@
 # FW SIM 7600 - Supported devices
 
+This firmware works with all SIM7600 series devices.
+
 During the device initialization, this script uses the response of the `AT+CGMM`
 command as the **product PID of the connected device**.
 The **device information is then retrieved from the PID mapping** in the

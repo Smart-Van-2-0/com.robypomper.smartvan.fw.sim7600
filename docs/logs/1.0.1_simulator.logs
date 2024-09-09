@@ -1,0 +1,71 @@
+
+(venv) robypomper@roby-hp:~/Workspaces/SmartVan/Sources/com.robypomper.smartvan.fw.sim7600$ python run.py --simulate
+WARN: RPi.GPIO module disabled.
+(2024-08-03 17:55:21,134) [INFO   ] com.robypomper.smartvan.fw.sim7600:FW SIM7600 (Version: 1.0.1-DEV)
+(2024-08-03 17:55:21,135) [INFO   ] DBus Internal Loop starting...
+(2024-08-03 17:55:21,136) [INFO   ] DBus Internal Loop started.
+(2024-08-03 17:55:21,136) [INFO   ] Publish DBus 'com.waveshare.sim7600' interface on 'com.waveshare.sim7600' DBus and '/sim7600' object path.
+(2024-08-03 17:55:21,139) [INFO   ] Start FW SIM7600 Main Loop. Press (Ctrl+C) to quit.
+(2024-08-03 17:55:21,139) [INFO   ]   ==== ==== ==== ====
+
+
+(2024-08-03 17:55:21,140) [INFO   ] R ==> manufacturer     = 'SIMCOM INCORPORATED'
+(2024-08-03 17:55:21,140) [INFO   ] R ==> model            = 'SIMCOM_SIM7600G-H'
+(2024-08-03 17:55:21,140) [INFO   ] R ==> serial_number    = '860147054839863'
+(2024-08-03 17:55:21,140) [INFO   ] R ==> version_module   = 'B04V03'
+(2024-08-03 17:55:21,141) [INFO   ] R ==> version_chip     = 'MDM9x07_LE20_S_22_V1.03_210527'
+(2024-08-03 17:55:21,141) [INFO   ] R ==> version_firmware = 'LE20B04SIM7600M22'
+(2024-08-03 17:55:21,141) [INFO   ] R ==> network_signal_quality_rssi = '-97'
+(2024-08-03 17:55:21,141) [WARNING] Error calculating 'network_signal_quality' property: Missing required property: 'network_signal_quality_ber'
+(2024-08-03 17:55:21,141) [INFO   ] R ==> network_signal_quality_ber = '6.0'
+(2024-08-03 17:55:21,142) [INFO   ] C ==> network_signal_quality = '13.81'
+(2024-08-03 17:55:21,142) [INFO   ] R ==> network_sim_status_code = '1'
+(2024-08-03 17:55:21,142) [INFO   ] C ==> network_sim_status = 'True'
+(2024-08-03 17:55:21,142) [INFO   ] R ==> network_sim_provider = 'China Mobile Com'
+(2024-08-03 17:55:21,142) [INFO   ] R ==> network_status_code = '0'
+(2024-08-03 17:55:21,143) [INFO   ] C ==> network_registration = 'False'
+(2024-08-03 17:55:21,143) [INFO   ] C ==> network_searching = 'False'
+(2024-08-03 17:55:21,143) [INFO   ] C ==> network_roaming  = 'False'
+(2024-08-03 17:55:21,143) [INFO   ] R ==> pos_gps_lat_degrees = '0'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_lat_dir  = 'True'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_log_degrees = '11.33681185'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_log_dir  = 'False'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_alt      = '276.754'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_speed    = '0.0167'
+(2024-08-03 17:55:21,144) [INFO   ] R ==> pos_gps_course   = '0.0'
+(2024-08-03 17:55:21,145) [INFO   ] R ==> pos_gnss_mode    = '2'
+(2024-08-03 17:55:21,145) [INFO   ] R ==> pos_gnss_sat_gps_count = '5'
+(2024-08-03 17:55:21,145) [INFO   ] C ==> pos_gnss_sat_count = '5'
+(2024-08-03 17:55:21,145) [INFO   ] R ==> pos_gnss_sat_glonass_count = '4'
+(2024-08-03 17:55:21,145) [INFO   ] R ==> pos_gnss_sat_beidou_count = '0'
+(2024-08-03 17:55:21,146) [INFO   ] R ==> pos_gnss_lat_degrees = '46.49724368333333'
+(2024-08-03 17:55:21,146) [INFO   ] R ==> pos_gnss_lat_dir = 'True'
+(2024-08-03 17:55:21,146) [INFO   ] R ==> pos_gnss_log_degrees = '11.3367657'
+(2024-08-03 17:55:21,146) [INFO   ] R ==> pos_gnss_log_dir = 'False'
+(2024-08-03 17:55:21,146) [INFO   ] R ==> pos_gnss_alt     = '274.89209999999997'
+(2024-08-03 17:55:21,147) [INFO   ] R ==> pos_gnss_speed   = '0.0035'
+(2024-08-03 17:55:21,147) [INFO   ] R ==> pos_gnss_course  = '0.0'
+(2024-08-03 17:55:21,147) [INFO   ] R ==> pos_gnss_pdop    = '1.2933000000000001'
+(2024-08-03 17:55:21,147) [INFO   ] R ==> pos_gnss_hdop    = '1.0365'
+(2024-08-03 17:55:21,147) [INFO   ] R ==> pos_gnss_vdop    = '0.8149000000000001'
+(2024-08-03 17:55:21,148) [INFO   ] R ==> power_module_state = 'True'
+(2024-08-03 17:55:26,153) [INFO   ]   ==== ==== ==== ====
+
+
+(2024-08-03 17:55:26,153) [INFO   ] R ==> network_signal_quality_rssi = '-99'
+(2024-08-03 17:55:26,153) [INFO   ] C ==> network_signal_quality = '10.58'
+(2024-08-03 17:55:26,154) [INFO   ] R ==> network_signal_quality_ber = '3.0'
+(2024-08-03 17:55:26,154) [INFO   ] C ==> network_signal_quality = '16.58'
+(2024-08-03 17:55:26,154) [INFO   ] R ==> pos_gps_log_degrees = '11.336843516666667'
+(2024-08-03 17:55:26,154) [INFO   ] R ==> pos_gps_alt      = '276.7305'
+(2024-08-03 17:55:26,154) [INFO   ] R ==> pos_gps_speed    = '0.0632'
+(2024-08-03 17:55:26,155) [INFO   ] R ==> pos_gps_course   = '0.0358'
+(2024-08-03 17:55:26,155) [INFO   ] R ==> pos_gnss_sat_glonass_count = '3'
+(2024-08-03 17:55:26,155) [INFO   ] R ==> pos_gnss_lat_degrees = '46.49718535'
+(2024-08-03 17:55:26,155) [INFO   ] R ==> pos_gnss_log_degrees = '11.336694033333334'
+(2024-08-03 17:55:26,155) [INFO   ] R ==> pos_gnss_alt     = '274.9099'
+(2024-08-03 17:55:26,156) [INFO   ] R ==> pos_gnss_speed   = '0.046400000000000004'
+(2024-08-03 17:55:26,156) [INFO   ] R ==> pos_gnss_course  = '0.0377'
+(2024-08-03 17:55:26,156) [INFO   ] R ==> pos_gnss_pdop    = '1.3163'
+(2024-08-03 17:55:26,156) [INFO   ] R ==> pos_gnss_hdop    = '0.9892'
+(2024-08-03 17:55:26,156) [INFO   ] R ==> pos_gnss_vdop    = '0.8219000000000001'
